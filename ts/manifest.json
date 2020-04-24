@@ -21,11 +21,11 @@
     "start_window": "background",
     "windows": {
       "background": {
-        "file": "dist/background/background.html",
+        "file": "windows/background/background.html",
         "is_background_page": true
       },
       "desktop": {
-        "file": "dist/desktop/desktop.html",
+        "file": "windows/desktop/desktop.html",
         "desktop_only": true,
         "native_window": true,
         "resizable": true,
@@ -40,7 +40,7 @@
         }
       },
       "in_game": {
-        "file": "dist/in_game/in_game.html",
+        "file": "windows/in_game/in_game.html",
         "in_game_only": true,
         "focus_game_takeover": "ReleaseOnHidden",
         "focus_game_takeover_release_hotkey": "showhide",
