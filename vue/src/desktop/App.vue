@@ -57,13 +57,14 @@
             <div>
               What can you learn with this sample app?
               <br /><br />
-              1. How to listen to real-time game events and how to identify specific
-              events like start/end match, kill, and death.
+              1. How to listen to real-time game events and how to identify
+              specific events like start/end match, kill, and death.
               <br /><br />
-              2. How to use a transparent background window as a service bus, that
-              acts as the main controller of your app.
+              2. How to use a transparent background window as a service bus,
+              that acts as the main controller of your app.
               <br /><br />
-              3. How to use Hotkeys that show/hide your app while you are in-game.
+              3. How to use Hotkeys that show/hide your app while you are
+              in-game.
             </div>
           </v-col>
           <v-col cols="12" md="3">

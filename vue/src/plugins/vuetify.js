@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuetify from "vuetify/lib";
 import colors from "vuetify/es5/util/colors";
 
-Vuetify.config.silent = true
+Vuetify.config.silent = true;
 
 Vue.use(Vuetify);
 

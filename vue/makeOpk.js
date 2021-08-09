@@ -16,9 +16,11 @@ function readFile(filePath) {
   });
 }
 
-function deleteFile(filePath) { return new Promise(resolve => {
-  fs.unlink(filePath, resolve);
-})}
+function deleteFile(filePath) {
+  return new Promise(resolve => {
+    fs.unlink(filePath, resolve);
+  });
+}
 
 async function makeOPK(suffix = "") {
   const packagePath = path.resolve(__dirname, "./package.json"),
