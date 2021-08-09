@@ -3,6 +3,7 @@ import { OWWindow } from "@overwolf/overwolf-api-ts/dist";
 export default {
   install(Vue) {
     Vue.prototype.$mainWindow = new OWWindow("background");
+    var maximized = false;
 
     Vue.prototype.$closeApp = function() {
       this.$mainWindow.close();
@@ -13,7 +14,12 @@ export default {
     };
     Vue.prototype.$maximazeApp = function(windowName) {
       let window = new OWWindow(windowName);
-      window.maximize();
+      if (maximized) {
+        window.restore();
+      } else {
+        window.maximize();
+      }
+      maximized = !maximized;
     };
     Vue.prototype.$getWindowState = async function (windowName) {
       let window = new OWWindow(windowName);
