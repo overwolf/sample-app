@@ -15,6 +15,7 @@ After installing, run the following commands in a terminal of your choice:
 ```
 node -v
 npm -v
+yarn -v
 ```
 If they run successfully, proceed to the next steps.
 
@@ -25,8 +26,8 @@ If they run successfully, proceed to the next steps.
 4. In your terminal, run the following commands:
 ```
 cd <insert path to your extracted 'vue.js' folder here>
-npm install
-npm run build
+yarn install
+yarn build
 ```
 
 5. Open the Overwolf desktop client settings (by right-clicking the client and selecting
@@ -40,13 +41,13 @@ This will add the app to your dock.
 8. Click on the app's icon in your dock.
 
 ## Building an .opk for distribution
-When you run run ```npm run build``` in your terminal, an .opk is created in releases/ directory
+When you run run ```yarn build``` in your terminal, an .opk is created in releases/ directory
 
 ## Changing the version number quickly
 We have included a webpack plugin that can change the .opk version quickly with just a command line argument. Simply add ```--env setVersion=1.0.1``` to your build command.
 Example:
 ```
-npm run build --env setVersion=1.0.1
+yarn build --env setVersion=1.0.1
 ```
 
 This will change the app version both in package.json and app's manifest.json
@@ -54,7 +55,7 @@ This will change the app version both in package.json and app's manifest.json
 ## What will you find inside?
 
 ### public/
-All of the static resources used by the app, like icons, images and CSS
+All of the static resources used by the app, like icons and the index.html.
 
 ##### public/manifest.json
 This file defines all of the aspects of the app.
@@ -65,7 +66,7 @@ All of this app's windows' properties can be found under the [```windows```](htt
 Please refer to the [dev site](https://overwolf.github.io/docs/api/manifest-json#welcome-to-the-manifestjson-file) to learn more about each property.
 
 #### src/
-Source .vue & .js files for the app
+Source Vue-components, custom JS plugins and assets.
 
 ##### src/background/
 This directory contains files of the background window, which serves as the application's starting point and window orchestrator.
