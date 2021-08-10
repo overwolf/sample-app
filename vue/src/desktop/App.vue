@@ -77,7 +77,7 @@
 </template>
 <script>
 export default {
-  name: "App",
+  name: "desktop",
   data: () => ({
     title: "Sample App / desktop window"
   }),
@@ -85,14 +85,14 @@ export default {
     this.$vuetify.theme.dark = true;
   },
   mounted() {
-    this.$setDrag("desktop", this.$refs.dragBar);
+    this.$setDrag(this.$options.name, this.$refs.dragBar);
   },
   methods: {
     minimize() {
-      this.$minimizeApp();
+      this.$minimizeApp(this.$options.name);
     },
     maximize() {
-      this.$maximazeApp();
+      this.$maximazeApp(this.$options.name);
     },
     close() {
       this.$closeApp();

@@ -21,6 +21,10 @@ export default {
       }
       maximized = !maximized;
     };
+    Vue.prototype.$restoreApp = function(windowName) {
+      let window = new OWWindow(windowName);
+      window.restore();
+    };
     Vue.prototype.$getWindowState = async function(windowName) {
       let window = new OWWindow(windowName);
       return await window.getWindowState();
