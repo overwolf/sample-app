@@ -4,12 +4,14 @@
   "description": "",
   "scripts": {
     "serve": "vue-cli-service serve --mode=development",
-    "build": "vue-cli-service build --mode=development",
+    "build": "vue-cli-service build --mode=development && node makeOpk.js",
     "lint": "vue-cli-service lint",
     "dev": "vue-cli-service build --watch --mode=development"
   },
   "dependencies": {
     "vue": "^2.6.14",
+    "vue-class-component": "^7.2.3",
+    "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.2",
     "vue-text-highlight": "^2.0.10",
     "vuetify": "^2.5.8",
@@ -20,12 +22,16 @@
   "devDependencies": {
     "@overwolf/overwolf-api-ts": "^1.3.0",
     "@overwolf/types": "^3.6.0",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-eslint": "~4.5.13",
     "@vue/cli-plugin-router": "^4.5.12",
+    "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-vuex": "^4.5.12",
     "@vue/cli-service": "~4.5.13",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
     "babel-eslint": "^10.1.0",
     "deepmerge": "^4.2.2",
     "eslint": "^6.7.2",
@@ -35,6 +41,7 @@
     "sass": "~1.32",
     "sass-loader": "^8.0.2",
     "semver": "^7.3.4",
+    "typescript": "~4.1.5",
     "vue-cli-plugin-axios": "0.0.4",
     "vue-cli-plugin-vuetify": "^2.0.9",
     "vue-template-compiler": "^2.6.14",
@@ -51,10 +58,11 @@
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended",
-      "@vue/prettier"
+      "@vue/prettier",
+      "@vue/typescript"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@typescript-eslint/parser"
     },
     "rules": {}
   },

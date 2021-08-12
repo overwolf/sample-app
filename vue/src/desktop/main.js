@@ -4,7 +4,6 @@ import vuetify from "@/plugins/vuetify";
 import windowFunctions from "@/plugins/appWindow";
 
 Vue.use(windowFunctions);
-
 Vue.config.productionTip = false;
 
 new Vue({

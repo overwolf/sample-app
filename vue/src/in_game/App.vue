@@ -12,7 +12,9 @@
           <v-col align="center">
             <span
               >Show/Hide:
-              <span class="font-weight-bold white--text">{{ shortcut }}</span></span
+              <span class="font-weight-bold white--text">{{
+                shortcut
+              }}</span></span
             >
           </v-col>
           <v-col align="end">
@@ -74,9 +76,11 @@
                   color="card_background"
                 >
                   <v-card-text>
-                    <text-highlight :highlightStyle="markHighlight" queries="version">{{
-                      infoText
-                    }}</text-highlight>
+                    <text-highlight
+                      :highlightStyle="markHighlight"
+                      queries="version"
+                      >{{ infoText }}</text-highlight
+                    >
                   </v-card-text>
                 </v-card>
               </v-card>
@@ -105,8 +109,9 @@ import {
   hotkeys,
   fortniteClassId,
   interestingFeatures
-} from "../plugins/consts";
+} from "@/plugins/consts";
 import { OWHotkeys, OWGamesEvents } from "@overwolf/overwolf-api-ts";
+const WindowState = overwolf.windows.WindowStateEx;
 export default {
   name: "in_game",
   data: () => ({
@@ -168,13 +173,13 @@ export default {
       const inGameState = await this.$getWindowState(this.$options.name);
 
       if (
-        inGameState.window_state === "normal" ||
-        inGameState.window_state === "maximized"
+        inGameState.window_state === WindowState.NORMAL ||
+        inGameState.window_state === WindowState.MAXIMIZED
       ) {
         this.minimize();
       } else if (
-        inGameState.window_state === "minimized" ||
-        inGameState.window_state === "closed"
+        inGameState.window_state === WindowState.MINIMIZED ||
+        inGameState.window_state === WindowState.CLOSED
       ) {
         this.restore();
       }
