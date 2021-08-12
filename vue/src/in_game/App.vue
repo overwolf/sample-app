@@ -12,7 +12,7 @@
           <v-col align="center">
             <span
               >Show/Hide:
-              <span class="font-weight-bold">{{ shortcut }}</span></span
+              <span class="font-weight-bold white--text">{{ shortcut }}</span></span
             >
           </v-col>
           <v-col align="end">
@@ -56,7 +56,7 @@
                 >
                   <v-card-text>
                     <text-highlight
-                      highlightClass="highlight"
+                      :highlightStyle="markHighlight"
                       :queries="wordsToHighlight"
                       >{{ eventText }}</text-highlight
                     >
@@ -74,7 +74,7 @@
                   color="card_background"
                 >
                   <v-card-text>
-                    <text-highlight highlightClass="highlight" queries="">{{
+                    <text-highlight :highlightStyle="markHighlight" queries="version">{{
                       infoText
                     }}</text-highlight>
                   </v-card-text>
@@ -123,7 +123,11 @@ export default {
       "matchEnd"
     ],
     infoText: "",
-    eventText: ""
+    eventText: "",
+    markHighlight: {
+      color: "#00DEFA",
+      background: "none"
+    }
   }),
   async created() {
     this.$vuetify.theme.dark = true;
@@ -178,7 +182,7 @@ export default {
     logLine(log, data) {
       console.log(`${log}Log:`);
       console.log(data);
-      const text = JSON.stringify(data) + "\n";
+      const text = JSON.stringify(data) + "\n\n";
 
       if (log === "info") {
         this.infoText += text;
@@ -214,9 +218,5 @@ svg {
 
 #title-text {
   margin-left: 0.5em;
-}
-
-.highlight {
-  color: #00defa;
 }
 </style>
