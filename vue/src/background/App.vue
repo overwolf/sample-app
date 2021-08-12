@@ -34,11 +34,11 @@ export default {
       }
 
       if (info.isRunning) {
-        this._windows[windowNames.desktop].close();
-        this._windows[windowNames.inGame].restore();
+        this.windows[windowNames.desktop].close();
+        this.windows[windowNames.inGame].restore();
       } else {
-        this._windows[windowNames.inGame].close();
-        this._windows[windowNames.desktop].restore();
+        this.windows[windowNames.inGame].close();
+        this.windows[windowNames.desktop].restore();
       }
     },
     async isFortniteRunning() {
