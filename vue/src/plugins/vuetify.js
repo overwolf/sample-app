@@ -28,7 +28,9 @@ export default new Vuetify({
         error: colors.red,
         warning: colors.orange,
         info: colors.blue.base,
-        success: colors.green
+        success: colors.green,
+        background: "#333333",
+        card_background: "#464646"
       }
     },
     options: { customProperties: true }
