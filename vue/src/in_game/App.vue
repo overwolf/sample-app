@@ -2,51 +2,128 @@
   <v-app>
     <div ref="dragBar">
       <v-system-bar id="v-system-bar" color="#272727" height="30" app>
-        <div class="d-flex align-center">
-          <v-img src="@/assets/header_icon.svg"></v-img>
-          <span id="title-text">{{ title }}</span>
-        </div>
-        <v-spacer></v-spacer>
-        <span
-          >Show/Hide: <span class="font-weight-bold">{{ shortcut }}</span></span
-        >
-        <v-spacer></v-spacer>
-        <div>
-          <v-btn @click="minimize" small icon depressed tile>
-            <svg>
-              <use
-                xlink:href="@/assets/header_icons.svg#window-control_minimize"
-              />
-            </svg>
-          </v-btn>
-          <v-btn @click="maximize" small icon depressed tile>
-            <svg>
-              <use
-                xlink:href="@/assets/header_icons.svg#window-control_maximize"
-              />
-            </svg>
-          </v-btn>
-          <v-btn id="closeButton" @click="close" small icon depressed tile>
-            <svg>
-              <use
-                xlink:href="@/assets/header_icons.svg#window-control_close"
-              />
-            </svg>
-          </v-btn>
-        </div>
+        <v-row align="center" no-gutters>
+          <v-col class="d-flex align-center" align="start">
+            <div class="d-flex align-center">
+              <v-img width="30px" src="@/assets/header_icon.svg"></v-img>
+              <span id="title-text">{{ title }}</span>
+            </div>
+          </v-col>
+          <v-col align="center">
+            <span
+              >Show/Hide:
+              <span class="font-weight-bold">{{ shortcut }}</span></span
+            >
+          </v-col>
+          <v-col align="end">
+            <div>
+              <v-btn @click="minimize" small icon depressed tile>
+                <svg>
+                  <use
+                    xlink:href="@/assets/header_icons.svg#window-control_minimize"
+                  />
+                </svg>
+              </v-btn>
+              <v-btn @click="maximize" small icon depressed tile>
+                <svg>
+                  <use
+                    xlink:href="@/assets/header_icons.svg#window-control_maximize"
+                  />
+                </svg>
+              </v-btn>
+              <v-btn id="closeButton" @click="close" small icon depressed tile>
+                <svg>
+                  <use
+                    xlink:href="@/assets/header_icons.svg#window-control_close"
+                  />
+                </svg>
+              </v-btn>
+            </div>
+          </v-col>
+        </v-row>
       </v-system-bar>
+      <v-main>
+        <v-container fluid>
+          <v-row justify="center">
+            <v-col cols="auto" md="4">
+              <v-card flat color="background">
+                <v-card-title>Game Events</v-card-title>
+                <v-card
+                  min-height="500px"
+                  max-height="500px"
+                  flat
+                  color="card_background"
+                >
+                  <v-card-text>
+                    <text-highlight
+                      highlightClass="highlight"
+                      :queries="wordsToHighlight"
+                      >{{ eventText }}</text-highlight
+                    >
+                  </v-card-text>
+                </v-card>
+              </v-card>
+            </v-col>
+            <v-col cols="auto" md="4">
+              <v-card flat color="background">
+                <v-card-title>Info Updates</v-card-title>
+                <v-card
+                  min-height="500px"
+                  max-height="500px"
+                  flat
+                  color="card_background"
+                >
+                  <v-card-text>
+                    <text-highlight highlightClass="highlight" queries="">{{
+                      infoText
+                    }}</text-highlight>
+                  </v-card-text>
+                </v-card>
+              </v-card>
+            </v-col>
+            <v-col cols="auto" md="3">
+              <v-card flat color="background">
+                <v-card-title>Real time Game Data</v-card-title>
+                <v-card-text>
+                  The background controller of this app is listening to all the
+                  game events and info updates, and sends them to this window,
+                  that prints them to the screen. Some specific events
+                  (startMatch, Kill and Death) are painted in
+                  <span style="color: #00DEFA">teal</span> and logged to the
+                  developers console.
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
     </div>
   </v-app>
 </template>
 <script>
-import { hotkeys, fortniteClassId } from "../plugins/consts";
-import { OWHotkeys } from "@overwolf/overwolf-api-ts";
+import {
+  hotkeys,
+  fortniteClassId,
+  interestingFeatures
+} from "../plugins/consts";
+import { OWHotkeys, OWGamesEvents } from "@overwolf/overwolf-api-ts";
 export default {
   name: "in_game",
   data: () => ({
     title: "Sample App / in-game window",
     shortcut: "",
-    WindowStates: undefined
+    WindowStates: undefined,
+    fortniteGameEventsListener: undefined,
+    wordsToHighlight: [
+      "kill",
+      "death",
+      "assist",
+      "level",
+      "matchStart",
+      "matchEnd"
+    ],
+    infoText: "",
+    eventText: ""
   }),
   async created() {
     this.$vuetify.theme.dark = true;
@@ -58,6 +135,16 @@ export default {
   },
   mounted() {
     this.$setDrag(this.$options.name, this.$refs.dragBar);
+
+    this.fortniteGameEventsListener = new OWGamesEvents(
+      {
+        onInfoUpdates: this.onInfoUpdates.bind(this),
+        onNewEvents: this.onNewEvents.bind(this)
+      },
+      interestingFeatures
+    );
+
+    this.run();
   },
   methods: {
     minimize() {
@@ -87,6 +174,26 @@ export default {
       ) {
         this.restore();
       }
+    },
+    logLine(log, data) {
+      console.log(`${log}Log:`);
+      console.log(data);
+      const text = JSON.stringify(data) + "\n";
+
+      if (log === "info") {
+        this.infoText += text;
+      } else if (log === "event") {
+        this.eventText += text;
+      }
+    },
+    onInfoUpdates(info) {
+      this.logLine("info", info);
+    },
+    onNewEvents(e) {
+      this.logLine("event", e);
+    },
+    async run() {
+      this.fortniteGameEventsListener.start();
     }
   }
 };
@@ -107,5 +214,9 @@ svg {
 
 #title-text {
   margin-left: 0.5em;
+}
+
+.highlight {
+  color: #00defa;
 }
 </style>
