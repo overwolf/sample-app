@@ -44,64 +44,70 @@
           </v-col>
         </v-row>
       </v-system-bar>
-      <v-main>
-        <v-container fluid>
-          <v-row justify="center">
-            <v-col cols="auto" md="4">
-              <v-card flat color="background">
-                <v-card-title>Game Events</v-card-title>
-                <v-card
-                  min-height="500px"
-                  max-height="500px"
-                  flat
-                  color="card_background"
-                >
-                  <v-card-text>
-                    <text-highlight
-                      :highlightStyle="markHighlight"
-                      :queries="wordsToHighlight"
-                      >{{ eventText }}</text-highlight
-                    >
-                  </v-card-text>
-                </v-card>
-              </v-card>
-            </v-col>
-            <v-col cols="auto" md="4">
-              <v-card flat color="background">
-                <v-card-title>Info Updates</v-card-title>
-                <v-card
-                  min-height="500px"
-                  max-height="500px"
-                  flat
-                  color="card_background"
-                >
-                  <v-card-text>
-                    <text-highlight
-                      :highlightStyle="markHighlight"
-                      queries="version"
-                      >{{ infoText }}</text-highlight
-                    >
-                  </v-card-text>
-                </v-card>
-              </v-card>
-            </v-col>
-            <v-col cols="auto" md="3">
-              <v-card flat color="background">
-                <v-card-title>Real time Game Data</v-card-title>
+    </div>
+    <v-main>
+      <v-container fluid>
+        <v-row justify="center">
+          <v-col cols="auto" md="4">
+            <v-card class="changeFontFamily" flat color="background">
+              <v-card-title>Game Events</v-card-title>
+              <v-card
+                min-height="500px"
+                max-height="500px"
+                flat
+                color="card_background"
+              >
                 <v-card-text>
-                  The background controller of this app is listening to all the
-                  game events and info updates, and sends them to this window,
-                  that prints them to the screen. Some specific events
-                  (startMatch, Kill and Death) are painted in
-                  <span style="color: #00DEFA">teal</span> and logged to the
-                  developers console.
+                  <virtual-list
+                    data-key="id"
+                    :data-sources="eventItems"
+                    :data-component="logComponent"
+                    style="height: 470px; overflow-y: auto;"
+                    ref="eventLogs"
+                  />
                 </v-card-text>
               </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-main>
-    </div>
+            </v-card>
+          </v-col>
+          <v-col cols="auto" md="4">
+            <v-card class="changeFontFamily" flat color="background">
+              <v-card-title>Info Updates</v-card-title>
+              <v-card
+                min-height="500px"
+                max-height="500px"
+                flat
+                color="card_background"
+              >
+                <v-card-text>
+                  <virtual-list
+                    data-key="id"
+                    :data-sources="infoItems"
+                    :data-component="logComponent"
+                    style="height: 470px; overflow-y: auto;"
+                    ref="infoLogs"
+                  />
+                </v-card-text>
+              </v-card>
+            </v-card>
+          </v-col>
+          <v-col cols="auto" md="3">
+            <v-card flat color="background">
+              <v-card-title class="changeFontFamily"
+                >Real time Game Data</v-card-title
+              >
+              <v-card-text>
+                The background controller of this app is listening to all the
+                game events and info updates, and sends them to this window,
+                that prints them to the screen. Some specific events
+                (startMatch, Kill and Death) are painted in
+                <span style="color: #00DEFA">teal</span> and logged to the
+                developers console.
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 <script>
@@ -111,11 +117,18 @@ import {
   interestingFeatures
 } from "@/plugins/consts";
 import { OWHotkeys, OWGamesEvents } from "@overwolf/overwolf-api-ts";
+import virtualList from "vue-virtual-scroll-list";
+import logItem from "../components/LogItem";
 const WindowState = overwolf.windows.WindowStateEx;
 export default {
   name: "in_game",
+  components: {
+    "virtual-list": virtualList
+  },
   data: () => ({
     title: "Sample App / in-game window",
+    logComponent: logItem,
+    logCounter: 0,
     shortcut: "",
     WindowStates: undefined,
     fortniteGameEventsListener: undefined,
@@ -127,12 +140,8 @@ export default {
       "matchStart",
       "matchEnd"
     ],
-    infoText: "",
-    eventText: "",
-    markHighlight: {
-      color: "#00DEFA",
-      background: "none"
-    }
+    infoItems: [],
+    eventItems: []
   }),
   async created() {
     this.$vuetify.theme.dark = true;
@@ -184,22 +193,32 @@ export default {
         this.restore();
       }
     },
-    logLine(log, data) {
+    logLine(log, data, highlight = false) {
       console.log(`${log}Log:`);
       console.log(data);
-      const text = JSON.stringify(data) + "\n\n";
+      let item = {};
+      item.text = JSON.stringify(data);
+      item.id = this.logCounter++;
+
+      item.mark = highlight;
 
       if (log === "info") {
-        this.infoText += text;
+        this.infoItems.push(item);
       } else if (log === "event") {
-        this.eventText += text;
+        this.eventItems.push(item);
       }
     },
     onInfoUpdates(info) {
       this.logLine("info", info);
+      this.$refs.infoLogs.scrollToBottom();
     },
     onNewEvents(e) {
-      this.logLine("event", e);
+      const shouldHighlight = e.events.some(event => {
+        return this.wordsToHighlight.includes(event.name);
+      });
+
+      this.logLine("event", e, shouldHighlight);
+      this.$refs.eventLogs.scrollToBottom();
     },
     async run() {
       this.fortniteGameEventsListener.start();
@@ -223,5 +242,9 @@ svg {
 
 #title-text {
   margin-left: 0.5em;
+}
+
+.changeFontFamily {
+  font-family: "Roboto Mono", serif;
 }
 </style>

@@ -29,7 +29,10 @@ export default {
       const window = new OWWindow(windowName);
       return await window.getWindowState();
     };
-    Vue.prototype.$setDrag = async function(windowName: string, elem: HTMLElement) {
+    Vue.prototype.$setDrag = async function(
+      windowName: string,
+      elem: HTMLElement
+    ) {
       const window = new OWWindow(windowName);
       window.dragMove(elem);
     };
