@@ -91,12 +91,14 @@ export class BackgroundController {
 
     const gameFeatures = kGamesFeatures.get(gameClassId);
 
-    // Register to game events
-    this.gepService.setRequiredFeatures(
-      gameFeatures,
-      e => this.onGameEvents(e),
-      e => this.onInfoUpdate(e)
-    );
+    if (gameFeatures && gameFeatures.length) {
+      // Register to game events
+      this.gepService.setRequiredFeatures(
+        gameFeatures,
+        e => this.onGameEvents(e),
+        e => this.onInfoUpdate(e)
+      );
+    }
 
     // Open in-game window
     await this.windowsService.restore(kWindowNames.IN_GAME);
@@ -124,11 +126,13 @@ export class BackgroundController {
 
     const gameFeatures = kGamesFeatures.get(gameClassId);
 
-    this.gepService.setRequiredFeatures(
-      gameFeatures,
-      e => this.onGameEvents(e),
-      e => this.onInfoUpdate(e)
-    );
+    if (gameFeatures && gameFeatures.length) {
+      this.gepService.setRequiredFeatures(
+        gameFeatures,
+        e => this.onGameEvents(e),
+        e => this.onInfoUpdate(e)
+      );
+    }
 
     await this.windowsService.restore(kWindowNames.IN_GAME);
 
