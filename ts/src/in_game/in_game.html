@@ -14,26 +14,14 @@
   <header id="header" class="app-header">
     <img src="../../img/header_icon.svg" />
     <h1>Sample App / in-game window</h1>
-    <h1 style="margin: auto;">
-      Show/Hide:
-      <span id="hotkey" style="font-weight: bold; color: white;"></span>
+    <h1 class="hotkey-text">
+      Show/Hide Hotkey:
+      <kbd id="hotkey"></kbd>
     </h1>
     <div class="window-controls-group">
-      <button class="icon window-control" id="minimizeButton">
-        <svg>
-          <use xlink:href="/img/header_icons.svg#window-control_minimize" />
-        </svg>
-      </button>
-      <button class="icon window-control" id="maximizeButton">
-        <svg>
-          <use xlink:href="/img/header_icons.svg#window-control_maximize" />
-        </svg>
-      </button>
-      <button class="icon window-control window-control-close" id="closeButton">
-        <svg>
-          <use xlink:href="/img/header_icons.svg#window-control_close" />
-        </svg>
-      </button>
+      <button id="minimizeButton" class="window-control window-control-minimize" />
+      <button id="maximizeButton" class="window-control window-control-maximize" />
+      <button id="closeButton" class="window-control window-control-close" />
     </div>
   </header>
 
@@ -51,13 +39,13 @@
       </div>
     </div>
     <div id="other">
-      <h1>Real time Game Data</h1>
+      <h1>Real-time Game Data</h1>
       <p id="infoParagraph">
         The background controller of this app is listening to all the game
         events and info updates, and sends them to this window, that prints
-        them to the screen. Some specific events (startMatch, Kill and Death)
-        are painted in <span style="color: #00DEFA">teal</span> and logged to
-        the developers console.
+        them to the screen. Some specific events (Match Start/End, Kill and
+        Death) are painted in <span style="color: #00DEFA">teal</span> and
+        logged to the developers console.
       </p>
     </div>
   </main>

@@ -1,168 +1,200 @@
-define([
-  "../../scripts/constants/window-names.js",
-  "../../scripts/services/running-game-service.js",
-  "../../scripts/services/windows-service.js",
-  "../../scripts/services/hotkeys-service.js",
-  "../../scripts/services/gep-service.js",
-  "../../scripts/services/event-bus.js"
-], function (
-  WindowNames,
-  runningGameService,
-  WindowsService,
-  hotkeysService,
-  gepService,
-  eventBus
-) {
-  class BackgroundController {
-    static async run() {
-      // this will be available when calling overwolf.windows.getMainWindow()
-      window.ow_eventBus = eventBus;
-      window.minimize = BackgroundController.minimize;
+import { kWindowNames } from '../../scripts/constants/window-names.js';
+import { RunningGameService } from '../../scripts/services/running-game-service.js';
+import { WindowsService } from '../../scripts/services/windows-service.js';
+import { HotkeysService } from '../../scripts/services/hotkeys-service.js';
+import { GepService } from '../../scripts/services/gep-service.js';
+import { EventBus } from '../../scripts/services/event-bus.js';
+import { kGameClassIds, kGamesFeatures } from '../../scripts/constants/games-features.js';
+import { kHotkeyToggle } from '../../scripts/constants/hotkeys-ids.js';
 
-      // Register handlers to hotkey events
-      BackgroundController._registerHotkeys();
+export class BackgroundController {
+  constructor() {
+    this.windowsService = WindowsService;
+    this.gepService = GepService;
+    this.runningGameService = new RunningGameService();
+    this.hotkeysService = new HotkeysService();
+    this.owEventBus = new EventBus();
+  }
 
-      await BackgroundController._restoreLaunchWindow();
+  async run() {
+    // this will be available when calling overwolf.windows.getMainWindow()
+    window.owEventBus = this.owEventBus;
+    window.minimize = () => this.minimize();
 
-      // Switch between desktop/in-game windows when launching/closing game
-      runningGameService.addGameRunningChangedListener(
-        BackgroundController._onRunningGameChanged
-      );
+    // Register handlers to hotkey events
+    this._registerHotkeys();
 
-      overwolf.extensions.onAppLaunchTriggered.addListener(e => {
-        if (e && e.source !== 'gamelaunchevent') {
-          BackgroundController._restoreAppWindow();
-        }
-      });
+    await this._restoreLaunchWindow();
 
-      // Listen to changes in windows
-      overwolf.windows.onStateChanged.addListener(async () => {
-        // If there's only 1 window (background) open, close the app
-        const openWindows = await WindowsService.getOpenWindows();
-        if (Object.keys(openWindows).length <= 1) {
-          window.close();
-        }
-      });
-    }
+    // Switch between desktop/in-game windows when launching/closing game
+    this.runningGameService.addGameRunningChangedListener(
+      isRunning => this._onRunningGameChanged(isRunning)
+    );
 
-    /**
-     * Minimize all app windows
-     * @public
-     */
-    static async minimize() {
-      const openWindows = await WindowsService.getOpenWindows();
-      for (let windowName in openWindows) {
-        await WindowsService.minimize(windowName);
+    overwolf.extensions.onAppLaunchTriggered.addListener(e => {
+      if (e && e.source !== 'gamelaunchevent') {
+        this._restoreAppWindow();
       }
-    }
+    });
 
-    /**
-     * Handle game opening/closing
-     * @private
-     */
-    static async _onRunningGameChanged(isGameRunning) {
-      if (isGameRunning) {
-        // Register to game events
-        gepService.registerToGEP(
-          BackgroundController.onGameEvents,
-          BackgroundController.onInfoUpdate
-        );
-        // Open in-game window
-        await WindowsService.restore(WindowNames.IN_GAME);
-        // Close desktop window
-        WindowsService.close(WindowNames.DESKTOP);
-      } else {
-        // Open desktop window
-        await WindowsService.restore(WindowNames.DESKTOP);
-        // Close in-game window
-        WindowsService.close(WindowNames.IN_GAME);
+    // Listen to changes in windows
+    overwolf.windows.onStateChanged.addListener(async () => {
+      const windowsStates = await this.windowsService.getWindowsStates();
+
+      // If all UI (non-background) windows are closed, close the app
+      const shouldClose = Object.entries(windowsStates)
+        .filter(([windowName, windowState]) => (windowName !== 'background'))
+        .every(([windowName, windowState]) => (windowState === 'closed'));
+
+      if (shouldClose) {
+        window.close();
       }
+    });
+  }
+
+  /**
+   * Minimize all app windows
+   * @public
+   */
+  async minimize() {
+    await Promise.all([
+      this.windowsService.minimize(kWindowNames.DESKTOP),
+      this.windowsService.minimize(kWindowNames.IN_GAME)
+    ]);
+  }
+
+  /**
+   * Handle game opening/closing
+   * @private
+   */
+  async _onRunningGameChanged(isGameRunning) {
+    if (!isGameRunning) {
+      // Open desktop window
+      await this.windowsService.restore(kWindowNames.DESKTOP);
+      // Close in-game window
+      await this.windowsService.close(kWindowNames.IN_GAME);
+      return;
     }
 
-    /**
-     * Open the relevant window on app launch
-     * @private
-     */
-    static async _restoreLaunchWindow() {
-      const isGameRunning = await runningGameService.isGameRunning();
+    const gameInfo = await this.runningGameService.getRunningGameInfo();
 
-      if (!isGameRunning) {
-
-        WindowsService.restore(WindowNames.DESKTOP);
-      } else {
-        gepService.registerToGEP(
-          BackgroundController.onGameEvents,
-          BackgroundController.onInfoUpdate
-        );
-
-        await WindowsService.restore(WindowNames.IN_GAME);
-
-        if (BackgroundController._launchedWithGameEvent()) {
-          WindowsService.minimize(WindowNames.IN_GAME);
-        }
-      }
+    if (!gameInfo || !gameInfo.isRunning) {
+      this.windowsService.restore(kWindowNames.DESKTOP);
+      return;
     }
 
-    /**
-     * Open the relevant window on user request
-     * @private
-     */
-    static async _restoreAppWindow() {
-      const isGameRunning = await runningGameService.isGameRunning();
+    const gameClassId = gameInfo.classId;
 
-      if (isGameRunning) {
-        WindowsService.restore(WindowNames.IN_GAME);
-      } else {
-        WindowsService.restore(WindowNames.DESKTOP);
-      }
+    if (!kGameClassIds.includes(gameClassId)) {
+      return;
     }
 
-    /**
-     * app was launched with game launch
-     * @private
-     */
-    static _launchedWithGameEvent() {
-      return location.href.includes('source=gamelaunchevent');
+    const gameFeatures = kGamesFeatures.get(gameClassId);
+
+    // Register to game events
+    this.gepService.setRequiredFeatures(
+      gameFeatures,
+      e => this.onGameEvents(e),
+      e => this.onInfoUpdate(e)
+    );
+
+    // Open in-game window
+    await this.windowsService.restore(kWindowNames.IN_GAME);
+    // Close desktop window
+    await this.windowsService.close(kWindowNames.DESKTOP);
+  }
+
+  /**
+   * Open the relevant window on app launch
+   * @private
+   */
+  async _restoreLaunchWindow() {
+    const gameInfo = await this.runningGameService.getRunningGameInfo();
+
+    if (!gameInfo || !gameInfo.isRunning) {
+      await this.windowsService.restore(kWindowNames.DESKTOP);
+      return;
     }
 
-    /**
-     * set custom hotkey behavior
-     * @private
-     */
-    static _registerHotkeys() {
-      hotkeysService.setToggleHotkey(async () => {
-        const state = await WindowsService.getWindowState(WindowNames.IN_GAME);
-        if (state === "minimized" || state === "closed") {
-          WindowsService.restore(WindowNames.IN_GAME);
-        } else if (state === "normal" || state === "maximized") {
-          WindowsService.minimize(WindowNames.IN_GAME);
-        }
-      });
+    const gameClassId = gameInfo.classId;
+
+    if (!kGameClassIds.includes(gameClassId)) {
+      return;
     }
 
-    /**
-     * Pass events to windows that are listening to them
-     * @private
-     */
-    static onGameEvents(data) {
-      data.events.forEach(event => {
-        console.log(JSON.stringify(event));
-        window.ow_eventBus.trigger("event", event);
+    const gameFeatures = kGamesFeatures.get(gameClassId);
 
-        if (event.name === "matchStart") {
-          WindowsService.restore(WindowNames.IN_GAME);
-        }
-      });
-    }
+    this.gepService.setRequiredFeatures(
+      gameFeatures,
+      e => this.onGameEvents(e),
+      e => this.onInfoUpdate(e)
+    );
 
-    /**
-     * Pass info updates to windows that are listening to them
-     * @private
-     */
-    static onInfoUpdate(data) {
-      window.ow_eventBus.trigger("info", data);
+    await this.windowsService.restore(kWindowNames.IN_GAME);
+
+    if (BackgroundController._launchedWithGameEvent()) {
+      await this.windowsService.minimize(kWindowNames.IN_GAME);
     }
   }
 
-  return BackgroundController;
-});
+  /**
+   * Open the relevant window on user request
+   * @private
+   */
+  async _restoreAppWindow() {
+    const isGameRunning = await this.runningGameService.isGameRunning();
+
+    if (isGameRunning) {
+      this.windowsService.restore(kWindowNames.IN_GAME);
+    } else {
+      this.windowsService.restore(kWindowNames.DESKTOP);
+    }
+  }
+
+  /**
+   * App was launched with game launch
+   * @private
+   */
+  static _launchedWithGameEvent() {
+    return location.href.includes('source=gamelaunchevent');
+  }
+
+  /**
+   * set custom hotkey behavior
+   * @private
+   */
+  _registerHotkeys() {
+    this.hotkeysService.setToggleHotkeyListener(kHotkeyToggle, async () => {
+      const state = await this.windowsService.getWindowState(kWindowNames.IN_GAME);
+
+      if (state === 'minimized' || state === 'closed') {
+        this.windowsService.restore(kWindowNames.IN_GAME);
+      } else if (state === 'normal' || state === 'maximized') {
+        this.windowsService.minimize(kWindowNames.IN_GAME);
+      }
+    });
+  }
+
+  /**
+   * Pass events to windows that are listening to them
+   * @private
+   */
+  onGameEvents(data) {
+    data.events.forEach(event => {
+      console.log(JSON.stringify(event));
+      this.owEventBus.trigger("event", event);
+
+      if (event.name === "matchStart") {
+        this.windowsService.restore(kWindowNames.IN_GAME);
+      }
+    });
+  }
+
+  /**
+   * Pass info updates to windows that are listening to them
+   * @private
+   */
+  onInfoUpdate(data) {
+    this.owEventBus.trigger("info", data);
+  }
+}

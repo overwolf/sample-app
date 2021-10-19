@@ -1,13 +1,14 @@
 /**
  * Detect whether a game is currently running
  */
-define(function () {
+export class RunningGameService {
+  constructor() {
+    this._gameRunningChangedListeners = [];
 
-  const _gameRunningChangedListeners = [];
+    this._onGameInfoUpdatedBound = this._onGameInfoUpdated.bind(this);
 
-  function _init() {
-    overwolf.games.onGameInfoUpdated.removeListener(_onGameInfoUpdated);
-    overwolf.games.onGameInfoUpdated.addListener(_onGameInfoUpdated);
+    overwolf.games.onGameInfoUpdated.removeListener(this._onGameInfoUpdatedBound);
+    overwolf.games.onGameInfoUpdated.addListener(this._onGameInfoUpdatedBound);
   }
 
   /**
@@ -16,44 +17,36 @@ define(function () {
    * @param event
    * @private
    */
-  function _onGameInfoUpdated(event) {
-    let gameRunning;
+   _onGameInfoUpdated(event) {
+    if (
+      event &&
+      (event.runningChanged || event.gameChanged)
+    ) {
+      const isRunning = (event.gameInfo && event.gameInfo.isRunning);
 
-    if (event &&
-      (event.runningChanged || event.gameChanged)) {
-      gameRunning = (event.gameInfo && event.gameInfo.isRunning);
-      for (let listener of _gameRunningChangedListeners) {
-        listener(gameRunning);
+      for (let listener of this._gameRunningChangedListeners) {
+        listener(isRunning);
       }
     }
   }
 
-  async function isGameRunning() {
-    let gameRunning = await _isGameRunning();
-    return gameRunning;
-  }
-
-  function _isGameRunning() {
-    return new Promise((resolve => {
+  isGameRunning() {
+    return new Promise(resolve => {
       // get the current running game info if any game is running
-      overwolf.games.getRunningGameInfo(function (runningGameInfo) {
-        if (runningGameInfo && runningGameInfo.isRunning) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
+      overwolf.games.getRunningGameInfo(runningGameInfo => {
+        resolve(runningGameInfo && runningGameInfo.isRunning);
       });
-    }));
-  }
-  
-  function addGameRunningChangedListener(callback) {
-    _gameRunningChangedListeners.push(callback);
+    });
   }
 
-  _init();
-
-  return {
-    isGameRunning,
-    addGameRunningChangedListener
+  getRunningGameInfo() {
+    return new Promise(resolve => {
+      // get the current running game info if any game is running
+      overwolf.games.getRunningGameInfo(resolve);
+    });
   }
-});
+
+  addGameRunningChangedListener(callback) {
+    this._gameRunningChangedListeners.push(callback);
+  }
+}

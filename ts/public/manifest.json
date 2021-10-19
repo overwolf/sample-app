@@ -4,14 +4,14 @@
   "meta": {
     "name": "Sample App",
     "author": "Overwolf",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "minimum-overwolf-version": "0.160.0",
     "description": "An example app for developers new to Overwolf",
     "dock_button_title": "Sample - TS",
     "icon": "icons/IconMouseOver.png",
     "icon_gray": "icons/IconMouseNormal.png",
-    "launcher_icon": "icons/DesktopIcon.ico",
-    "window_icon": "icons/TaskbarIcon.png"
+    "launcher_icon": "icons/desktop-icon.ico",
+    "window_icon": "icons/IconMouseOver.png"
   },
   "permissions": [
     "Hotkeys",
@@ -19,9 +19,30 @@
   ],
   "data": {
     "start_window": "background",
+    "hotkeys": {
+      "sample_app_ts_showhide": {
+        "title": "Show/Hide In-Game Window",
+        "action-type": "toggle",
+        "default": "Ctrl+F"
+      }
+    },
+    "protocol_override_domains": {
+      "googlesyndication": "http"
+    },
+    "externally_connectable": {
+      "matches": [
+        "http://*.overwolf.com",
+        "https://*.overwolf.com",
+        "https://*.google-analytics.com",
+        "http://*.google-analytics.com",
+        "https://www.googleapis.com"
+      ]
+    },
+    "force_browser": "user",
     "windows": {
       "background": {
         "file": "background.html",
+        "background_optimization": false,
         "is_background_page": true
       },
       "desktop": {
@@ -44,7 +65,7 @@
         "file": "in_game.html",
         "in_game_only": true,
         "focus_game_takeover": "ReleaseOnHidden",
-        "focus_game_takeover_release_hotkey": "showhide",
+        "focus_game_takeover_release_hotkey": "sample_app_ts_showhide",
         "resizable": true,
         "transparent": true,
         "override_on_update": true,
@@ -61,48 +82,62 @@
     "game_targeting": {
       "type": "dedicated",
       "game_ids": [
-        21216
+        21216,
+        7764,
+        5426,
+        21634,
+        8032,
+        10844,
+        10906,
+        10826,
+        21404,
+        7212,
+        21640,
+        7314,
+        21626,
+        8954
       ]
     },
     "game_events": [
-      21216
+      21216,
+      7764,
+      5426,
+      21634,
+      8032,
+      10844,
+      10906,
+      10826,
+      21404,
+      7212,
+      21640,
+      7314,
+      21626,
+      8954
     ],
     "launch_events": [
       {
         "event": "GameLaunch",
         "event_data": {
           "game_ids": [
-            21216
+            21216,
+            7764,
+            5426,
+            21634,
+            8032,
+            10844,
+            10906,
+            10826,
+            21404,
+            7212,
+            21640,
+            7314,
+            21626,
+            8954
           ]
         },
-        "start_minimized": false
+        "start_minimized": true
       }
     ],
-    "hotkeys": {
-      "showhide": {
-        "title": "Show/Hide In-Game Window",
-        "action-type": "toggle",
-        "default": "Ctrl+F"
-      }
-    },
-    "protocol_override_domains": {
-      "googlesyndication": "http"
-    },
-    "externally_connectable": {
-      "matches": [
-        "http://*.overwolf.com",
-        "https://*.overwolf.com",
-        "https://overwolf.github.io",
-        "https://*.google-analytics.com",
-        "http://*.google-analytics.com",
-        "https://www.googleapis.com",
-        "https://discord.gg/v5cfBTq",
-        "https://twitter.com/",
-        "https://www.facebook.com",
-        "https://www.reddit.com"
-      ]
-    },
-    "force_browser": "user",
     "developer": {
       "enable_auto_refresh": true,
       "reload_delay": 1000,

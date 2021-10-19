@@ -1,15 +1,10 @@
-define([
-  '../../windows/desktop/desktop-view.js'
-], function (DesktopView) {
+import { DesktopView } from '../../windows/desktop/desktop-view.js';
 
-  class DesktopController {
-    constructor() {
-      this.desktopView = new DesktopView();
-    }
-
-    run() {
-    }
+export class DesktopController {
+  constructor() {
+    this.desktopView = new DesktopView();
   }
 
-  return DesktopController;
-});
+  run() {
+  }
+}

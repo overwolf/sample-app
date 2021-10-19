@@ -1,16 +1,13 @@
-define(function () {
-  const _listeners = [];
-
-  function addListener(eventHandler) {
-    _listeners.push(eventHandler);
+export class EventBus {
+  constructor() {
+    this._listeners = [];
   }
 
-  function trigger(eventName, data) {
-    _listeners.forEach(listener => listener(eventName, data))
+  addListener(eventHandler) {
+    this._listeners.push(eventHandler);
   }
 
-  return {
-    addListener,
-    trigger
+  trigger(eventName, eventValue) {
+    this._listeners.forEach(listener => listener(eventName, eventValue))
   }
-});
+}

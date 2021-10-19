@@ -1,12 +1,7 @@
-define([
-  '../SampleAppView.js'
-], function (SampleAppView) {
+import { SampleAppView } from '../sample-app-view.js'
 
-  class DesktopView extends SampleAppView {
-    constructor() {
-      super();
-    }
+export class DesktopView extends SampleAppView {
+  constructor() {
+    super();
   }
-
-  return DesktopView;
-});
+}
