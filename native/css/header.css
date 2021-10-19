@@ -1,14 +1,3 @@
-.icon {
-  position: relative;
-  width: var(--size, 30px);
-  height: var(--size, 30px);
-  transition: 0.15s;
-}
-.icon svg {
-  width: 100%;
-  height: 100%;
-}
-
 .toggle-icons svg {
   position: absolute;
   top: 0;
@@ -31,29 +20,37 @@
 
 .app-header {
   display: flex;
-  background-color: #272727;
   align-items: center;
   z-index: 9999;
+  background-color: #272727;
 }
 
 .app-header h1 {
-  font-family: "Roboto";
+  padding-left: 8px;
+  margin: 0;
   font-style: normal;
   font-weight: normal;
   color: #8d8d8d;
   font-size: 14px;
-  padding-left: 8px;
-  margin: 0;
+  cursor: inherit;
 }
 
-.app-header.draggable,
-.app-header.draggable h1 {
-    user-select: none;
+.app-header .hotkey-text {
+  margin: 0 auto;
+}
 
-    cursor: move;
-    cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
+.app-header .hotkey-text kbd {
+  color: #fff;
+  font-weight: bold;
+}
+
+.app-header.draggable {
+  user-select: none;
+  cursor: grab;
+}
+
+.app-header.draggable:active {
+  cursor: grabbing;
 }
 
 .app-header img {
@@ -62,36 +59,63 @@
 }
 
 .window-controls-group {
+  display: flex;
   z-index: 1001;
   margin-left: auto;
-  display: flex;
-  --color: #a8a8a8;
-  --color-hover: #dedede;
-  --bg-color-hover: #464646;
 }
-
 .window-control {
-  color: var(--color);
-  background-color: transparent;
+  background: transparent;
+  transition: background 0.15s ease-in-out;
 }
 .window-control:hover,
 .window-control:active {
-  color: var(--color-hover);
-  background-color: var(--bg-color-hover);
+  background: #464646;
 }
-
-.window-control-close {
-  --color-hover: #dedede;
-  --bg-color-hover: #c21913;
+.window-control:before {
+  display: block;
+  content: '';
+  width: 30px;
+  height: 30px;
+  -webkit-mask: url('../img/window_minimize.svg') center center no-repeat;
+  mask: url('../img/window_minimize.svg') center center no-repeat;
+  background: #a8a8a8;
+  transition: inherit;
 }
-
-.light-theme {
-  background-color: #f6f6f6;
+.window-control:hover:before,
+.window-control:active:before {
+  background: #dedede;
 }
-.light-theme .window-controls-group {
-  --color: #828282;
-  --color-hover: #4f4f4f;
-  --bg-color-hover: #dedede;
+.window-control-minimize:before {
+  -webkit-mask-image: url('../img/window_minimize.svg');
+  mask-image: url('../img/window_minimize.svg');
+}
+.window-control-maximize:before {
+  -webkit-mask-image: url('../img/window_maximize.svg');
+  mask-image: url('../img/window_maximize.svg');
+}
+.window-control-restore:before {
+  -webkit-mask-image: url('../img/window_restore.svg');
+  mask-image: url('../img/window_restore.svg');
+}
+.window-control-settings:before {
+  -webkit-mask-image: url('../img/window_settings.svg');
+  mask-image: url('../img/window_settings.svg');
+}
+.window-control-support:before {
+  -webkit-mask-image: url('../img/window_support.svg');
+  mask-image: url('../img/window_support.svg');
+}
+.window-control-close:before {
+  -webkit-mask-image: url('../img/window_close.svg');
+  mask-image: url('../img/window_close.svg');
+}
+.window-control-close:hover,
+.window-control-close:active {
+  background: #c21913;
+}
+.window-control-close:hover:before,
+.window-control-close:active:before {
+  background: #dedede;
 }
 
 .tooltip {
@@ -103,7 +127,6 @@
   background: #464646;
   padding: 30px 5px;
   line-height: 20px;
-  font-family: "Roboto";
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -111,7 +134,6 @@
 }
 
 .tooltip a {
-  font-family: "Roboto";
   font-style: normal;
   font-weight: normal;
   font-size: 14px;

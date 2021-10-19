@@ -1,6 +1,5 @@
-define({
+export const kWindowNames =  {
   BACKGROUND: 'background',
   DESKTOP: 'desktop',
-  IN_GAME: 'in_game',
-  NOTIFICATION: 'notification'
-});
+  IN_GAME: 'in_game'
+};

@@ -3,50 +3,24 @@
  * This will listen to events from the game provided by
  * Overwolf's Game Events Provider
  */
-define([
+const REGISTER_RETRY_TIMEOUT = 10000;
 
-],
-  function () {
-
-    const REQUIRED_FEATURES = [
-      'counters',
-      'death',
-      'items',
-      'kill',
-      'killed',
-      'killer',
-      'location',
-      'match_info',
-      'match',
-      'me',
-      'phase',
-      'rank',
-      'revived',
-      'team',
-    ];
-    const REGISTER_RETRY_TIMEOUT = 10000;
-
-    function registerToGEP(eventsListener, infoListener) {
-      overwolf.games.events.setRequiredFeatures(REQUIRED_FEATURES, function (response) {
-        if (response.status === 'error') {
-          console.log(`Failed to register to GEP, retrying in ${REGISTER_RETRY_TIMEOUT / 1000}s...`);
-
-          setTimeout(registerToGEP, REGISTER_RETRY_TIMEOUT, eventsListener, infoListener);
-          
-          return;
-        }
-
+export class GepService {
+  static setRequiredFeatures(features, eventsListener, infoListener) {
+    overwolf.games.events.setRequiredFeatures(features, response => {
+      if (response.success) {
         console.log(`Successfully registered to GEP.`);
-        
+
         overwolf.games.events.onNewEvents.removeListener(eventsListener);
         overwolf.games.events.onNewEvents.addListener(eventsListener);
 
         overwolf.games.events.onInfoUpdates2.removeListener(infoListener);
         overwolf.games.events.onInfoUpdates2.addListener(infoListener);
-      });
-    }
+      } else {
+        console.log(`Failed to register to GEP, retrying in ${REGISTER_RETRY_TIMEOUT / 1000}s...`);
 
-    return {
-      registerToGEP
-    }
-  });
+        setTimeout(setRequiredFeatures, REGISTER_RETRY_TIMEOUT, eventsListener, infoListener);
+      }
+    });
+  }
+}

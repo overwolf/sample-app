@@ -1,126 +1,107 @@
-define([ ], function () {
-
+export class WindowsService {
   /**
-   * obtain a window object by a name as declared in the manifest
-   * this is required in order to create the window before calling other APIs
+   * Obtain a window object by a name as declared in the manifest.
+   * This is required in order to create the window before calling other APIs
    * on that window
    * @param name
    * @returns {Promise<any>}
    */
-  function obtainWindow(name) {
+  static obtainWindow(name) {
     return new Promise((resolve, reject) => {
-      overwolf.windows.obtainDeclaredWindow(name, (response) => {
-        if (response.status !== 'success') {
-          return reject(response);
+      overwolf.windows.obtainDeclaredWindow(name, result => {
+        if (result.success) {
+          resolve(result);
+        } else {
+          reject(result);
         }
-        resolve(response);
       });
     });
   }
 
   /**
-   * restore a window by name
+   * Restore a window by name
    * @param name
    * @returns {Promise<any>}
    */
-  function restore(name) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await obtainWindow(name);
-        overwolf.windows.restore(name, (result) => {
-          if (result.status === 'success') {
-            resolve();
-          } else {
-            reject(result);
-          }
-        });
-      } catch (e) {
-        reject(e)
-      }
+  static async restore(name) {
+    await WindowsService.obtainWindow(name);
+
+    return new Promise((resolve, reject) => {
+      overwolf.windows.restore(name, result => {
+        if (result.success) {
+          resolve();
+        } else {
+          reject(result);
+        }
+      });
     });
   }
 
   /**
-   * minimize a window by name
+   * Minimize a window by name
    * @param name
    * @returns {Promise<any>}
    */
-  function minimize(name) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await obtainWindow(name);
-        overwolf.windows.minimize(name, (result) => {
-          if (result.status === 'success') {
-            resolve();
-          } else {
-            reject(result);
-          }
-        });
-      } catch (e) {
-        reject(e)
-      }
-    });
-  }
+  static async minimize(name) {
+    await WindowsService.obtainWindow(name);
 
-  /**
-   * Returns a map (window name, object) of all open windows.
-   * @returns {Promise<any>}
-   */
-  function getOpenWindows() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        overwolf.windows.getOpenWindows((result) => {
-          resolve(result);
-        });
-      } catch (e) {
-        reject(e);
-      }
+    return new Promise((resolve, reject) => {
+      overwolf.windows.minimize(name, result => {
+        if (result.success) {
+          resolve();
+        } else {
+          reject(result);
+        }
+      });
     });
   }
 
   /**
    * Close a window
-   * @param windowName
+   * @param name
    * @returns {Promise<any>}
    */
-  function close(windowName) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        overwolf.windows.close(windowName, () => {
+  static close(name) {
+    return new Promise((resolve, reject) => {
+      overwolf.windows.close(name, result => {
+        if (result.success) {
           resolve();
-        });
-      } catch (e) {
-        reject(e);
-      }
+        } else {
+          reject(result);
+        }
+      });
     });
   }
 
   /**
-   * get state of the window
-   * @returns {Promise<*>}
+   * Get state of the window
+   * @returns {Promise<string>}
    */
-  async function getWindowState(name) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        overwolf.windows.getWindowState(name, (state) => {
-          if (state.status === 'success') {
-            resolve(state.window_state_ex);
-          } else {
-            reject(state);
-          }
-        })
-      } catch (e){
-        reject(e);
-      }
+  static getWindowState(name) {
+    return new Promise((resolve, reject) => {
+      overwolf.windows.getWindowState(name, state => {
+        if (state.success) {
+          resolve(state.window_state_ex);
+        } else {
+          reject(state);
+        }
+      })
     });
   }
-  
-  return {
-    restore,
-    minimize,
-    obtainWindow,
-    getOpenWindows,
-    close,
-    getWindowState
+
+  /**
+   * Get states of app's windows
+   * @returns {Promise<any>}
+   */
+   static getWindowsStates() {
+    return new Promise((resolve, reject) => {
+      overwolf.windows.getWindowsStates(state => {
+        if (state.success) {
+          resolve(state);
+        } else {
+          reject(state);
+        }
+      })
+    });
   }
-});
+}

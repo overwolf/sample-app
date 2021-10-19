@@ -1,3 +1,1 @@
-define({
-  TOGGLE: 'sample_app_showhide',
-});
+export const kHotkeyToggle = 'sample_app_showhide';

@@ -1,4 +1,4 @@
-export const kGamesFeatures = new Map<number, string[]>([
+export const kGamesFeatures = new Map([
   // Fortnite
   [
     21216,
@@ -236,12 +236,3 @@ export const kGamesFeatures = new Map<number, string[]>([
 ]);
 
 export const kGameClassIds = Array.from(kGamesFeatures.keys());
-
-export const kWindowNames = {
-  inGame: 'in_game',
-  desktop: 'desktop'
-};
-
-export const kHotkeys = {
-  toggle: 'sample_app_ts_showhide'
-};

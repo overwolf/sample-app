@@ -15,19 +15,8 @@
       <img src="../../img/header_icon.svg" />
       <h1>Sample App / desktop window</h1>
       <div class="window-controls-group">
-        <button class="icon window-control" id="minimizeButton">
-          <svg>
-            <use xlink:href="/img/header_icons.svg#window-control_minimize" />
-          </svg>
-        </button>
-        <button
-          class="icon window-control window-control-close"
-          id="closeButton"
-        >
-          <svg>
-            <use xlink:href="/img/header_icons.svg#window-control_close" />
-          </svg>
-        </button>
+        <button id="minimizeButton" class="window-control window-control-minimize" />
+        <button id="closeButton" class="window-control window-control-close" />
       </div>
     </header>
 
@@ -42,13 +31,13 @@
         <div id="version"></div>
       </div>
       <div class="desktopBottom">
-        <!-- Launch Fortnite! -->
+        <!-- Launch a game! -->
         <div id="left">
           <h1>
-            Launch Fortnite,and the In-Game window will pop-up automatically!
+            Launch a game, and the In-Game window will pop-up automatically!
           </h1>
         </div>
-        <!-- Launch Fortnite! -->
+        <!-- Launch a game! -->
         <div id="middle">
           What can you learn with this sample app?
           <br /><br />
@@ -71,15 +60,6 @@
       </div>
     </main>
 
-    <script src="../../lib/require.js"></script>
-    <script>
-      require(["desktop-controller"], function(DesktopController) {
-        console.log(`[INIT] desktop module loaded`);
-        const desktopCntroller = new DesktopController();
-        desktopCntroller.run();
-      }, function(error) {
-        console.log(`[INIT] failed to load desktop module ${error}`);
-      });
-    </script>
+    <script type="module" src="./desktop.js"></script>
   </body>
 </html>
