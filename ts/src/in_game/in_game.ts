@@ -43,15 +43,17 @@ class InGame extends AppWindow {
 
     const gameFeatures = kGamesFeatures.get(gameClassId);
 
-    this._gameEventsListener = new OWGamesEvents(
-      {
-        onInfoUpdates: this.onInfoUpdates.bind(this),
-        onNewEvents: this.onNewEvents.bind(this)
-      },
-      gameFeatures
-    );
+    if (gameFeatures && gameFeatures.length) {
+      this._gameEventsListener = new OWGamesEvents(
+        {
+          onInfoUpdates: this.onInfoUpdates.bind(this),
+          onNewEvents: this.onNewEvents.bind(this)
+        },
+        gameFeatures
+      );
 
-    this._gameEventsListener.start();
+      this._gameEventsListener.start();
+    }
   }
 
   private onInfoUpdates(info) {
