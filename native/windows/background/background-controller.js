@@ -38,29 +38,36 @@ export class BackgroundController {
     });
 
     // Listen to changes in windows
-    overwolf.windows.onStateChanged.addListener(async () => {
-      const windowsStates = await this.windowsService.getWindowsStates();
-
-      // If all UI (non-background) windows are closed, close the app
-      const shouldClose = Object.entries(windowsStates)
-        .filter(([windowName, windowState]) => (windowName !== 'background'))
-        .every(([windowName, windowState]) => (windowState === 'closed'));
-
-      if (shouldClose) {
-        window.close();
-      }
-    });
+    overwolf.windows.onStateChanged.addListener(
+      () => this._onWindowStateChanged()
+    );
   }
 
   /**
-   * Minimize all app windows
+   * Minimize all UI windows
    * @public
    */
   async minimize() {
-    await Promise.all([
-      this.windowsService.minimize(kWindowNames.DESKTOP),
-      this.windowsService.minimize(kWindowNames.IN_GAME)
-    ]);
+    const windowsStates = await this.windowsService.getWindowsStates();
+
+    if (!windowsStates.success)
+      return;
+
+    const states = windowsStates.resultV2;
+
+    const promises = []
+
+    if (states[kWindowNames.DESKTOP] !== 'closed') {
+      promises.push(this.windowsService.minimize(kWindowNames.DESKTOP));
+    }
+
+    if (states[kWindowNames.IN_GAME] !== 'closed') {
+      promises.push(this.windowsService.minimize(kWindowNames.IN_GAME));
+    }
+
+    if (promises.length) {
+      await Promise.all(promises);
+    }
   }
 
   /**
@@ -95,8 +102,8 @@ export class BackgroundController {
       // Register to game events
       this.gepService.setRequiredFeatures(
         gameFeatures,
-        e => this.onGameEvents(e),
-        e => this.onInfoUpdate(e)
+        e => this._onGameEvents(e),
+        e => this._onInfoUpdate(e)
       );
     }
 
@@ -129,8 +136,8 @@ export class BackgroundController {
     if (gameFeatures && gameFeatures.length) {
       this.gepService.setRequiredFeatures(
         gameFeatures,
-        e => this.onGameEvents(e),
-        e => this.onInfoUpdate(e)
+        e => this._onGameEvents(e),
+        e => this._onInfoUpdate(e)
       );
     }
 
@@ -164,6 +171,27 @@ export class BackgroundController {
   }
 
   /**
+   * Listen to window state changes,
+   * close the app when all UI windows are closed
+   * @private
+   */
+  async _onWindowStateChanged() {
+    const windowsStates = await this.windowsService.getWindowsStates();
+
+    if (!windowsStates.success)
+      return;
+
+    // If all UI (non-background) windows are closed, close the app
+    const shouldClose = Object.entries(windowsStates.resultV2)
+      .filter(([windowName, windowState]) => (windowName !== 'background'))
+      .every(([windowName, windowState]) => (windowState === 'closed'));
+
+    if (shouldClose) {
+      window.close();
+    }
+  }
+
+  /**
    * set custom hotkey behavior
    * @private
    */
@@ -183,7 +211,7 @@ export class BackgroundController {
    * Pass events to windows that are listening to them
    * @private
    */
-  onGameEvents(data) {
+  _onGameEvents(data) {
     data.events.forEach(event => {
       console.log(JSON.stringify(event));
       this.owEventBus.trigger("event", event);
@@ -198,7 +226,7 @@ export class BackgroundController {
    * Pass info updates to windows that are listening to them
    * @private
    */
-  onInfoUpdate(data) {
+  _onInfoUpdate(data) {
     this.owEventBus.trigger("info", data);
   }
 }
