@@ -72,7 +72,7 @@ export class WindowsService {
     }
 
     return new Promise((resolve, reject) => {
-      overwolf.windows.close(name, result => {
+      overwolf.windows.close(window.id, result => {
         if (result.success) {
           resolve();
         } else {
