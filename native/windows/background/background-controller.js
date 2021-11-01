@@ -55,7 +55,7 @@ export class BackgroundController {
 
     const states = windowsStates.resultV2;
 
-    const promises = []
+    const promises = [];
 
     if (states[kWindowNames.DESKTOP] !== 'closed') {
       promises.push(this.windowsService.minimize(kWindowNames.DESKTOP));
@@ -77,26 +77,24 @@ export class BackgroundController {
   async _onRunningGameChanged(isGameRunning) {
     if (!isGameRunning) {
       // Open desktop window
-      await this.windowsService.restore(kWindowNames.DESKTOP);
+      this.windowsService.restore(kWindowNames.DESKTOP);
       // Close in-game window
-      await this.windowsService.close(kWindowNames.IN_GAME);
+      this.windowsService.close(kWindowNames.IN_GAME);
       return;
     }
 
     const gameInfo = await this.runningGameService.getRunningGameInfo();
 
-    if (!gameInfo || !gameInfo.isRunning) {
-      this.windowsService.restore(kWindowNames.DESKTOP);
+    if (
+      !gameInfo ||
+      !gameInfo.isRunning ||
+      !gameInfo.classId ||
+      !kGameClassIds.includes(gameInfo.classId)
+    ) {
       return;
     }
 
-    const gameClassId = gameInfo.classId;
-
-    if (!kGameClassIds.includes(gameClassId)) {
-      return;
-    }
-
-    const gameFeatures = kGamesFeatures.get(gameClassId);
+    const gameFeatures = kGamesFeatures.get(gameInfo.classId);
 
     if (gameFeatures && gameFeatures.length) {
       // Register to game events
@@ -108,9 +106,9 @@ export class BackgroundController {
     }
 
     // Open in-game window
-    await this.windowsService.restore(kWindowNames.IN_GAME);
+    this.windowsService.restore(kWindowNames.IN_GAME);
     // Close desktop window
-    await this.windowsService.close(kWindowNames.DESKTOP);
+    this.windowsService.close(kWindowNames.DESKTOP);
   }
 
   /**
@@ -197,7 +195,9 @@ export class BackgroundController {
    */
   _registerHotkeys() {
     this.hotkeysService.setToggleHotkeyListener(kHotkeyToggle, async () => {
-      const state = await this.windowsService.getWindowState(kWindowNames.IN_GAME);
+      const state = await this.windowsService.getWindowState(
+        kWindowNames.IN_GAME
+      );
 
       if (state === 'minimized' || state === 'closed') {
         this.windowsService.restore(kWindowNames.IN_GAME);
