@@ -19,7 +19,13 @@ export class GepService {
       } else {
         console.log(`Failed to register to GEP, retrying in ${REGISTER_RETRY_TIMEOUT / 1000}s...`);
 
-        setTimeout(setRequiredFeatures, REGISTER_RETRY_TIMEOUT, eventsListener, infoListener);
+        setTimeout(() => {
+          GepService.setRequiredFeatures(
+            features,
+            eventsListener,
+            infoListener
+          );
+        }, REGISTER_RETRY_TIMEOUT);
       }
     });
   }
