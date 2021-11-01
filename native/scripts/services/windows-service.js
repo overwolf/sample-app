@@ -62,6 +62,8 @@ export class WindowsService {
    * @returns {Promise<any>}
    */
   static close(name) {
+    await WindowsService.obtainWindow(name);
+
     return new Promise((resolve, reject) => {
       overwolf.windows.close(name, result => {
         if (result.success) {

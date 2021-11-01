@@ -55,7 +55,7 @@ export class BackgroundController {
 
     const states = windowsStates.resultV2;
 
-    const promises = []
+    const promises = [];
 
     if (states[kWindowNames.DESKTOP] !== 'closed') {
       promises.push(this.windowsService.minimize(kWindowNames.DESKTOP));
