@@ -2,4 +2,4 @@ import { BackgroundController } from './background-controller.js';
 
 const backgroundController = new BackgroundController();
 
-backgroundController.run();
+backgroundController.run().catch(e => console.error(e));

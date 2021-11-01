@@ -17,7 +17,7 @@ export class GepService {
         overwolf.games.events.onInfoUpdates2.removeListener(infoListener);
         overwolf.games.events.onInfoUpdates2.addListener(infoListener);
       } else {
-        console.log(`Failed to register to GEP, retrying in ${REGISTER_RETRY_TIMEOUT / 1000}s...`);
+        console.log(`Failed to register to GEP: ${response.error}. Retrying in ${REGISTER_RETRY_TIMEOUT / 1000}s...`);
 
         setTimeout(() => {
           GepService.setRequiredFeatures(

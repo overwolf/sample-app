@@ -31,8 +31,6 @@ export class InGameController {
       gameInfo.classId
     );
 
-    console.log(kHotkeyToggle, gameInfo.classId, hotkey);
-
     this.inGameView.updateHotkey(hotkey);
   }
 

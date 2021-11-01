@@ -12,7 +12,8 @@ export class WindowsService {
         if (result.success) {
           resolve(result);
         } else {
-          reject(result);
+          console.warn('WindowsService.obtainWindow(): error:', name, result);
+          reject(new Error(result.error));
         }
       });
     });
@@ -24,14 +25,15 @@ export class WindowsService {
    * @returns {Promise<any>}
    */
   static async restore(name) {
-    await WindowsService.obtainWindow(name);
+    const { window } = await WindowsService.obtainWindow(name);
 
     return new Promise((resolve, reject) => {
-      overwolf.windows.restore(name, result => {
+      overwolf.windows.restore(window.id, result => {
         if (result.success) {
           resolve();
         } else {
-          reject(result);
+          console.warn('WindowsService.restore(): error:', name, result);
+          reject(new Error(result.error));
         }
       });
     });
@@ -43,14 +45,15 @@ export class WindowsService {
    * @returns {Promise<any>}
    */
   static async minimize(name) {
-    await WindowsService.obtainWindow(name);
+    const { window } = await WindowsService.obtainWindow(name);
 
     return new Promise((resolve, reject) => {
-      overwolf.windows.minimize(name, result => {
+      overwolf.windows.minimize(window.id, result => {
         if (result.success) {
           resolve();
         } else {
-          reject(result);
+          console.warn('WindowsService.minimize(): error:', name, result);
+          reject(new Error(result.error));
         }
       });
     });
@@ -61,15 +64,20 @@ export class WindowsService {
    * @param name
    * @returns {Promise<any>}
    */
-  static close(name) {
-    await WindowsService.obtainWindow(name);
+  static async close(name) {
+    const { window } = await WindowsService.obtainWindow(name);
+
+    if (window.stateEx === 'closed') {
+      return;
+    }
 
     return new Promise((resolve, reject) => {
       overwolf.windows.close(name, result => {
         if (result.success) {
           resolve();
         } else {
-          reject(result);
+          console.warn('WindowsService.close(): error:', name, result);
+          reject(new Error(result.error));
         }
       });
     });
@@ -79,13 +87,16 @@ export class WindowsService {
    * Get state of the window
    * @returns {Promise<string>}
    */
-  static getWindowState(name) {
+  static async getWindowState(name) {
+    const { window } = await WindowsService.obtainWindow(name);
+
     return new Promise((resolve, reject) => {
-      overwolf.windows.getWindowState(name, state => {
-        if (state.success) {
-          resolve(state.window_state_ex);
+      overwolf.windows.getWindowState(window.id, result => {
+        if (result.success) {
+          resolve(result.window_state_ex);
         } else {
-          reject(state);
+          console.warn('WindowsService.getWindowState(): error:', name, result);
+          reject(new Error(result.error));
         }
       })
     });
