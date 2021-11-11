@@ -103,7 +103,7 @@ export class WindowsService {
   /**
    * Close a window
    * @param {string} name
-   * @returns {Promise<any>}
+   * @returns {Promise<void>}
    */
   static async close(name) {
     const state = await WindowsService.getWindowState(name);
@@ -113,16 +113,7 @@ export class WindowsService {
 
     const { window } = await WindowsService.obtainWindow(name);
 
-    return new Promise((resolve, reject) => {
-      overwolf.windows.close(window.id, result => {
-        if (result.success) {
-          resolve();
-        } else {
-          console.warn('WindowsService.close(): error:', name, result);
-          reject(new Error(result.error));
-        }
-      });
-    });
+    await new Promise(resolve => overwolf.windows.close(window.id, resolve));
   }
 
   /**
@@ -194,7 +185,7 @@ export class WindowsService {
     return new Promise((resolve, reject) => {
       overwolf.windows.getWindowsStates(state => {
         if (state.success) {
-          resolve(state);
+          resolve(state.resultV2);
         } else {
           reject(state);
         }

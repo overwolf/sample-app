@@ -14,6 +14,7 @@ export class BackgroundController {
     this.owEventBus = new EventBus();
     this.owEventsStore = [];
     this.owInfoUpdatesStore = [];
+    this.shutdownTimeout = null;
     this.hasMultipleMonitors = null;
   }
 
@@ -107,10 +108,10 @@ export class BackgroundController {
     }
 
     // Open in-game window
-    this._restoreGameWindow();
+    await this._restoreGameWindow();
 
     // Close desktop window
-    WindowsService.close(kWindowNames.DESKTOP);
+    await WindowsService.close(kWindowNames.DESKTOP);
   }
 
   /**
@@ -141,7 +142,7 @@ export class BackgroundController {
 
     // If app was not launched automatically, restore the a relevant game window
     if (!BackgroundController._launchedWithGameEvent()) {
-      this._restoreGameWindow();
+      await this._restoreGameWindow();
     }
   }
 
@@ -153,9 +154,9 @@ export class BackgroundController {
     const isGameRunning = await this.runningGameService.isGameRunning();
 
     if (isGameRunning) {
-      this._restoreGameWindow();
+      await this._restoreGameWindow();
     } else {
-      WindowsService.restore(kWindowNames.DESKTOP);
+      await WindowsService.restore(kWindowNames.DESKTOP);
     }
   }
 
@@ -178,23 +179,55 @@ export class BackgroundController {
    * @private
    */
   async _onWindowStateChanged() {
+    if (await this._canShutdown()) {
+      this._startShutdownTimeout();
+    } else {
+      this._stopShutdownTimeout();
+    }
+  }
+
+  /**
+   * Check whether we can safely close the app
+   * @private
+   */
+  async _canShutdown() {
     const isGameRunning = await this.runningGameService.isGameRunning();
 
     // Never shut down the app when a game is running
     if (isGameRunning) {
-      return;
+      return false;
     }
 
-    const { resultV2: states } = await WindowsService.getWindowsStates();
+    const states = await WindowsService.getWindowsStates();
 
-    // If all UI (non-background) windows are closed, close the app
-    const shouldClose = Object.entries(states)
+    // If all UI (non-background) windows are closed, we can close the app
+    return Object.entries(states)
       .filter(([windowName]) => (windowName !== kWindowNames.BACKGROUND))
       .every(([windowName, windowState]) => (windowState === 'closed'));
+  }
 
-    // Close the whole app
-    if (shouldClose) {
-      window.close();
+  /**
+   * Start shutdown timeout, and close after 10 if possible
+   * @private
+   */
+  _startShutdownTimeout() {
+    this._stopShutdownTimeout();
+
+    this.shutdownTimeout = setTimeout(async () => {
+      if (await this._canShutdown()) {
+        window.close(); // Close the whole app
+      }
+    }, 10000);
+  }
+
+  /**
+   * Stop shutdown timeout
+   * @private
+   */
+  _stopShutdownTimeout() {
+    if (this.shutdownTimeout !== null) {
+      clearTimeout(this.shutdownTimeout);
+      this.shutdownTimeout = null;
     }
   }
 
@@ -217,7 +250,7 @@ export class BackgroundController {
    * @private
    */
   async _onHotkeyTogglePressed() {
-    const { resultV2: states } = await WindowsService.getWindowsStates();
+    const states = await WindowsService.getWindowsStates();
 
     switch (states[kWindowNames.SECOND]) {
       case 'normal':
@@ -240,7 +273,7 @@ export class BackgroundController {
    * @private
    */
   async _onHotkeySecondScreenPressed() {
-    const { resultV2: states } = await WindowsService.getWindowsStates();
+    const states = await WindowsService.getWindowsStates();
 
     switch (states[kWindowNames.IN_GAME]) {
       case 'normal':

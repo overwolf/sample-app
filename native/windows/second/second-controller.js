@@ -82,6 +82,9 @@ export class SecondController {
     this.secondView.updateSecondHotkey(hotkeySecondScreen);
   }
 
+  /**
+   * Position & center this window on a secondary monitor
+   */
   async _positionWindow() {
     const [
       { window },
@@ -133,10 +136,11 @@ export class SecondController {
       });
     }
 
-    await Promise.all([
-      WindowsService.maximize(kWindowNames.SECOND),
-      WindowsService.setTopmost(kWindowNames.SECOND, true)
-    ]);
+    if (window.stateEx !== 'maximized') {
+      await WindowsService.maximize(kWindowNames.SECOND);
+    }
+
+    await WindowsService.setTopmost(kWindowNames.SECOND, true);
   }
 
   _eventListener(eventName, eventValue) {
