@@ -5,21 +5,26 @@ import { HotkeysService } from '../../scripts/services/hotkeys-service.js';
 import { GepService } from '../../scripts/services/gep-service.js';
 import { EventBus } from '../../scripts/services/event-bus.js';
 import { kGameClassIds, kGamesFeatures } from '../../scripts/constants/games-features.js';
-import { kHotkeyToggle } from '../../scripts/constants/hotkeys-ids.js';
+import { kHotkeySecondScreen, kHotkeyToggle } from '../../scripts/constants/hotkeys-ids.js';
 
 export class BackgroundController {
   constructor() {
-    this.windowsService = WindowsService;
-    this.gepService = GepService;
     this.runningGameService = new RunningGameService();
     this.hotkeysService = new HotkeysService();
     this.owEventBus = new EventBus();
+    this.owEventsStore = [];
+    this.owInfoUpdatesStore = [];
+    this.hasMultipleMonitors = null;
   }
 
   async run() {
-    // this will be available when calling overwolf.windows.getMainWindow()
+    // These objects will be available via calling
+    // overwolf.windows.getMainWindow() in other windows
     window.owEventBus = this.owEventBus;
-    window.minimize = () => this.minimize();
+    window.owEventsStore = this.owEventsStore;
+    window.owInfoUpdatesStore = this.owInfoUpdatesStore;
+
+    this.hasMultipleMonitors = await BackgroundController._hasMultipleMonitors();
 
     // Register handlers to hotkey events
     this._registerHotkeys();
@@ -27,9 +32,9 @@ export class BackgroundController {
     await this._restoreLaunchWindow();
 
     // Switch between desktop/in-game windows when launching/closing game
-    this.runningGameService.addGameRunningChangedListener(
-      isRunning => this._onRunningGameChanged(isRunning)
-    );
+    this.runningGameService.addGameRunningChangedListener(isRunning => {
+      this._onRunningGameChanged(isRunning);
+    });
 
     overwolf.extensions.onAppLaunchTriggered.addListener(e => {
       if (e && e.source !== 'gamelaunchevent') {
@@ -37,37 +42,28 @@ export class BackgroundController {
       }
     });
 
-    // Listen to changes in windows
-    overwolf.windows.onStateChanged.addListener(
-      () => this._onWindowStateChanged()
-    );
+    // Listen to changes in window states
+    overwolf.windows.onStateChanged.addListener(() => {
+      this._onWindowStateChanged();
+    });
   }
 
   /**
-   * Minimize all UI windows
-   * @public
+   * App was launched with game launch
+   * @private
    */
-  async minimize() {
-    const windowsStates = await this.windowsService.getWindowsStates();
+  static _launchedWithGameEvent() {
+    return location.href.includes('source=gamelaunchevent');
+  }
 
-    if (!windowsStates.success)
-      return;
+  /**
+   * This PC has multiple monitors
+   * @private
+   */
+  static async _hasMultipleMonitors() {
+    const monitors = await WindowsService.getMonitorsList();
 
-    const states = windowsStates.resultV2;
-
-    const promises = [];
-
-    if (states[kWindowNames.DESKTOP] !== 'closed') {
-      promises.push(this.windowsService.minimize(kWindowNames.DESKTOP));
-    }
-
-    if (states[kWindowNames.IN_GAME] !== 'closed') {
-      promises.push(this.windowsService.minimize(kWindowNames.IN_GAME));
-    }
-
-    if (promises.length) {
-      await Promise.all(promises);
-    }
+    return (monitors.length > 1);
   }
 
   /**
@@ -77,9 +73,10 @@ export class BackgroundController {
   async _onRunningGameChanged(isGameRunning) {
     if (!isGameRunning) {
       // Open desktop window
-      this.windowsService.restore(kWindowNames.DESKTOP);
-      // Close in-game window
-      this.windowsService.close(kWindowNames.IN_GAME);
+      WindowsService.restore(kWindowNames.DESKTOP);
+      // Close game windows
+      WindowsService.close(kWindowNames.IN_GAME);
+      WindowsService.close(kWindowNames.SECOND);
       return;
     }
 
@@ -94,11 +91,15 @@ export class BackgroundController {
       return;
     }
 
+    // Clear the stored data when a new game starts
+    this.owEventsStore.length = 0;
+    this.owInfoUpdatesStore.length = 0;
+
     const gameFeatures = kGamesFeatures.get(gameInfo.classId);
 
     if (gameFeatures && gameFeatures.length) {
       // Register to game events
-      this.gepService.setRequiredFeatures(
+      GepService.setRequiredFeatures(
         gameFeatures,
         e => this._onGameEvents(e),
         e => this._onInfoUpdate(e)
@@ -106,9 +107,10 @@ export class BackgroundController {
     }
 
     // Open in-game window
-    this.windowsService.restore(kWindowNames.IN_GAME);
+    this._restoreGameWindow();
+
     // Close desktop window
-    this.windowsService.close(kWindowNames.DESKTOP);
+    WindowsService.close(kWindowNames.DESKTOP);
   }
 
   /**
@@ -119,30 +121,27 @@ export class BackgroundController {
     const gameInfo = await this.runningGameService.getRunningGameInfo();
 
     if (!gameInfo || !gameInfo.isRunning) {
-      await this.windowsService.restore(kWindowNames.DESKTOP);
+      await WindowsService.restore(kWindowNames.DESKTOP);
       return;
     }
 
-    const gameClassId = gameInfo.classId;
-
-    if (!kGameClassIds.includes(gameClassId)) {
+    if (!kGameClassIds.includes(gameInfo.classId)) {
       return;
     }
 
-    const gameFeatures = kGamesFeatures.get(gameClassId);
+    const gameFeatures = kGamesFeatures.get(gameInfo.classId);
 
     if (gameFeatures && gameFeatures.length) {
-      this.gepService.setRequiredFeatures(
+      GepService.setRequiredFeatures(
         gameFeatures,
         e => this._onGameEvents(e),
         e => this._onInfoUpdate(e)
       );
     }
 
-    await this.windowsService.restore(kWindowNames.IN_GAME);
-
-    if (BackgroundController._launchedWithGameEvent()) {
-      await this.windowsService.minimize(kWindowNames.IN_GAME);
+    // If app was not launched automatically, restore the a relevant game window
+    if (!BackgroundController._launchedWithGameEvent()) {
+      this._restoreGameWindow();
     }
   }
 
@@ -154,57 +153,109 @@ export class BackgroundController {
     const isGameRunning = await this.runningGameService.isGameRunning();
 
     if (isGameRunning) {
-      this.windowsService.restore(kWindowNames.IN_GAME);
+      this._restoreGameWindow();
     } else {
-      this.windowsService.restore(kWindowNames.DESKTOP);
+      WindowsService.restore(kWindowNames.DESKTOP);
     }
   }
 
   /**
-   * App was launched with game launch
+   * Restore the relevant game window, in-game or on second screen,
+   * depending on whether the user has a second screen
    * @private
    */
-  static _launchedWithGameEvent() {
-    return location.href.includes('source=gamelaunchevent');
+  _restoreGameWindow() {
+    if (this.hasMultipleMonitors) {
+      return WindowsService.restore(kWindowNames.SECOND);
+    } else {
+      return WindowsService.restore(kWindowNames.IN_GAME);
+    }
   }
 
   /**
    * Listen to window state changes,
-   * close the app when all UI windows are closed
+   * and close the app when all UI windows are closed
    * @private
    */
   async _onWindowStateChanged() {
-    const windowsStates = await this.windowsService.getWindowsStates();
+    const isGameRunning = await this.runningGameService.isGameRunning();
 
-    if (!windowsStates.success)
+    // Never shut down the app when a game is running
+    if (isGameRunning) {
       return;
+    }
+
+    const { resultV2: states } = await WindowsService.getWindowsStates();
 
     // If all UI (non-background) windows are closed, close the app
-    const shouldClose = Object.entries(windowsStates.resultV2)
-      .filter(([windowName, windowState]) => (windowName !== 'background'))
+    const shouldClose = Object.entries(states)
+      .filter(([windowName]) => (windowName !== kWindowNames.BACKGROUND))
       .every(([windowName, windowState]) => (windowState === 'closed'));
 
+    // Close the whole app
     if (shouldClose) {
       window.close();
     }
   }
 
   /**
-   * set custom hotkey behavior
+   * Set custom hotkey behavior
    * @private
    */
   _registerHotkeys() {
-    this.hotkeysService.setToggleHotkeyListener(kHotkeyToggle, async () => {
-      const state = await this.windowsService.getWindowState(
-        kWindowNames.IN_GAME
-      );
-
-      if (state === 'minimized' || state === 'closed') {
-        this.windowsService.restore(kWindowNames.IN_GAME);
-      } else if (state === 'normal' || state === 'maximized') {
-        this.windowsService.minimize(kWindowNames.IN_GAME);
-      }
+    this.hotkeysService.setToggleHotkeyListener(kHotkeyToggle, () => {
+      this._onHotkeyTogglePressed();
     });
+
+    this.hotkeysService.setToggleHotkeyListener(kHotkeySecondScreen, () => {
+      this._onHotkeySecondScreenPressed();
+    });
+  }
+
+  /**
+   * Handle toggle hotkey press
+   * @private
+   */
+  async _onHotkeyTogglePressed() {
+    const { resultV2: states } = await WindowsService.getWindowsStates();
+
+    switch (states[kWindowNames.SECOND]) {
+      case 'normal':
+      case 'maximized':
+        WindowsService.close(kWindowNames.SECOND);
+    }
+
+    switch (states[kWindowNames.IN_GAME]) {
+      case 'normal':
+      case 'maximized':
+        WindowsService.close(kWindowNames.IN_GAME);
+        break;
+      default:
+        WindowsService.restore(kWindowNames.IN_GAME);
+    }
+  }
+
+  /**
+   * Handle second screen hotkey press
+   * @private
+   */
+  async _onHotkeySecondScreenPressed() {
+    const { resultV2: states } = await WindowsService.getWindowsStates();
+
+    switch (states[kWindowNames.IN_GAME]) {
+      case 'normal':
+      case 'maximized':
+        WindowsService.close(kWindowNames.IN_GAME);
+    }
+
+    switch (states[kWindowNames.SECOND]) {
+      case 'normal':
+      case 'maximized':
+        WindowsService.close(kWindowNames.SECOND);
+        break;
+      default:
+        WindowsService.restore(kWindowNames.SECOND);
+    }
   }
 
   /**
@@ -213,11 +264,12 @@ export class BackgroundController {
    */
   _onGameEvents(data) {
     data.events.forEach(event => {
-      console.log(JSON.stringify(event));
-      this.owEventBus.trigger("event", event);
+      this.owEventsStore.push(event);
 
-      if (event.name === "matchStart") {
-        this.windowsService.restore(kWindowNames.IN_GAME);
+      this.owEventBus.trigger('event', event);
+
+      if (event.name === 'matchStart') {
+        this._restoreGameWindow();
       }
     });
   }
@@ -226,7 +278,9 @@ export class BackgroundController {
    * Pass info updates to windows that are listening to them
    * @private
    */
-  _onInfoUpdate(data) {
-    this.owEventBus.trigger("info", data);
+  _onInfoUpdate(infoUpdate) {
+    this.owInfoUpdatesStore.push(infoUpdate);
+
+    this.owEventBus.trigger('info', infoUpdate);
   }
 }

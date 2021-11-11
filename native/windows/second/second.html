@@ -6,20 +6,25 @@
     <link rel="stylesheet" href="../../css/header.css" />
     <link rel="stylesheet" href="../../css/ingame.css" />
     <link rel="stylesheet" href="../../css/modal.css" />
-    <title>Overwolf Sample App - In-Game window</title>
+    <title>Overwolf Sample App - Second Screen window</title>
   </head>
-  <body class="in-game">
+  <body class="second">
     <!-- -------------------------------- Header ------------------------------- -->
 
     <header class="app-header">
       <img src="../../img/header_icon.svg" />
-      <h1>Sample App / in-game window</h1>
+      <h1>Sample App / second screen window</h1>
       <h1 class="hotkey-text">
         Show/Hide Hotkey:
-        <kbd id="hotkey"></kbd>
+        <kbd id="hotkey-toggle"></kbd>
+      </h1>
+      <h1 class="hotkey-text">
+        Toggle Second screen Hotkey:
+        <kbd id="hotkey-second-screen"></kbd>
       </h1>
       <div class="window-controls-group">
         <button id="minimizeButton" class="window-control window-control-minimize" />
+        <button id="maximizeButton" class="window-control window-control-maximize" />
         <button id="closeButton" class="window-control window-control-close" />
       </div>
     </header>
@@ -54,6 +59,6 @@
       </div>
     </main>
 
-    <script type="module" src="./in-game.js"></script>
+    <script type="module" src="./second.js"></script>
   </body>
 </html>
