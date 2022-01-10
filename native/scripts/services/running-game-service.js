@@ -30,10 +30,6 @@ export class RunningGameService {
     }
   }
 
-  /**
-   * Check whether a game is running
-   * @returns {Promise<boolean>}
-   */
   isGameRunning() {
     return new Promise(resolve => {
       // get the current running game info if any game is running

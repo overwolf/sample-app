@@ -8,11 +8,16 @@ export class InGameView extends SampleAppView {
     this._infoLog = document.getElementById('infoLog');
     this._copyEventsButton = document.getElementById('copyEvents');
     this._copyInfoButton = document.getElementById('copyInfo');
-    this._hotkeyToggle = document.getElementById('hotkey-toggle');
-    this._hotkeySecondScreen = document.getElementById('hotkey-second-screen');
+    this._hotkey = document.getElementById('hotkey');
 
-    this._copyEventsButton.addEventListener('click', e => this._copyEventsLog(e));
-    this._copyInfoButton.addEventListener('click', e => this._copyInfoLog(e));
+    this.logEvent = this.logEvent.bind(this);
+    this.logInfoUpdate = this.logInfoUpdate.bind(this);
+    this.updateHotkey = this.updateHotkey.bind(this);
+    this._copyEventsLog = this._copyEventsLog.bind(this);
+    this._copyInfoLog = this._copyInfoLog.bind(this);
+
+    this._copyEventsButton.addEventListener('click', this._copyEventsLog);
+    this._copyInfoButton.addEventListener('click', this._copyInfoLog);
   }
 
   // -- Public --
@@ -26,14 +31,9 @@ export class InGameView extends SampleAppView {
     this._logLine(this._infoLog, string, isHighlight);
   }
 
-  // Update toggle hotkey header
-  updateToggleHotkey(hotkey) {
-    this._hotkeyToggle.textContent = hotkey;
-  }
-
-  // Update second screen hotkey header
-  updateSecondHotkey(hotkey) {
-    this._hotkeySecondScreen.textContent = hotkey;
+  // Update hotkey header
+  updateHotkey(hotkey) {
+    this._hotkey.textContent = hotkey;
   }
 
   // -- Private --

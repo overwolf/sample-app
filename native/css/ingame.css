@@ -35,7 +35,6 @@ h1 {
   flex-direction: column;
   flex: 1 1 50%;
   padding-right: 30px;
-  user-select: auto;
 }
 
 #ad {
