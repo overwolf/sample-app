@@ -28,15 +28,21 @@
 .app-header h1 {
   padding-left: 8px;
   margin: 0;
+  color: #8d8d8d;
   font-style: normal;
   font-weight: normal;
-  color: #8d8d8d;
   font-size: 14px;
   cursor: inherit;
 }
 
 .app-header .hotkey-text {
   margin: 0 auto;
+  padding-left: 8px;
+  color: #8d8d8d;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  cursor: inherit;
 }
 
 .app-header .hotkey-text kbd {
