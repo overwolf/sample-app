@@ -4,6 +4,7 @@ import { WindowsService } from '../../scripts/services/windows-service.js';
 import { HotkeysService } from '../../scripts/services/hotkeys-service.js';
 import { GepService } from '../../scripts/services/gep-service.js';
 import { EventBus } from '../../scripts/services/event-bus.js';
+import { GoogleAnalytics } from '../../scripts/services/google-analytics.js';
 import { kGameClassIds, kGamesFeatures } from '../../scripts/constants/games-features.js';
 import { kHotkeySecondScreen, kHotkeyToggle } from '../../scripts/constants/hotkeys-ids.js';
 
@@ -16,6 +17,7 @@ export class BackgroundController {
     this.owInfoUpdatesStore = [];
     this.shutdownTimeout = null;
     this.hasMultipleMonitors = null;
+    this.ga = new GoogleAnalytics();
   }
 
   async run() {
@@ -47,6 +49,9 @@ export class BackgroundController {
     overwolf.windows.onStateChanged.addListener(() => {
       this._onWindowStateChanged();
     });
+
+    this.ga.start();
+    this.ga.ga('send', 'pageview');
   }
 
   /**

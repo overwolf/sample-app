@@ -1,5 +1,6 @@
 import { DragService } from '../scripts/services/drag-service.js';
 import { WindowsService } from '../scripts/services/windows-service.js';
+import { GoogleAnalytics } from '../scripts/services/google-analytics.js';
 
 export class SampleAppView {
   constructor() {
@@ -9,6 +10,7 @@ export class SampleAppView {
     this._maximizeButton = document.getElementById('maximizeButton');
     this._header = document.getElementsByClassName('app-header')[0];
     this._version = document.getElementById('version');
+    this._ga = new GoogleAnalytics();
     this._dragService = null;
 
     // Initialize
@@ -70,6 +72,9 @@ export class SampleAppView {
         this._version.textContent = `Version ${manifest.meta.version}`;
       }
     });
+
+    this._ga.start();
+    this._ga.ga('send', 'pageview');
   }
 
   static async _toggleWindowMaximize() {
