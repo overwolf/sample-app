@@ -1,4 +1,5 @@
 import { DragService } from '../scripts/services/drag-service.js';
+import { GoogleAnalytics } from '../scripts/services/google-analytics.js';
 
 export class SampleAppView {
   constructor() {
@@ -9,7 +10,10 @@ export class SampleAppView {
     this._minimizeButton = document.getElementById('minimizeButton');
     this._header = document.getElementsByClassName('app-header')[0];
     this._version = document.getElementById('version');
-    // Inittialize
+    this._ga = new GoogleAnalytics();
+    this._dragService = null;
+
+    // Initialize
     this.init();
   }
 
@@ -33,5 +37,8 @@ export class SampleAppView {
       }
       this._version.textContent = `Version ${manifest.meta.version}`;
     });
+
+    this._ga.start();
+    this._ga.ga('send', 'pageview');
   }
 }
