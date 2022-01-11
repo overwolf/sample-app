@@ -1,6 +1,6 @@
 import { SampleAppView } from '../sample-app-view.js'
 
-export class InGameView extends SampleAppView {
+export class SecondView extends SampleAppView {
   constructor() {
     super();
 
@@ -21,6 +21,7 @@ export class InGameView extends SampleAppView {
   logEvent(string, isHighlight) {
     this._logLine(this._eventsLog, string, isHighlight);
   }
+
   // Add a line to the info updates log
   logInfoUpdate(string, isHighlight) {
     this._logLine(this._infoLog, string, isHighlight);
@@ -50,7 +51,9 @@ export class InGameView extends SampleAppView {
   _copyLog(log) {
     // Get text from all span children
     const nodes = log.childNodes;
+
     let text = '';
+
     for (let node of nodes) {
       if (node.tagName === 'PRE') {
         text += node.innerText + "\n";
