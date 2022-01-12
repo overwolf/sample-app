@@ -32,7 +32,7 @@ export class HotkeysService {
 	}
 
 	/**
-	 * get a hotkey combination by hotkey id and game id
+	 * Get a hotkey combination by hotkey id and game id
 	 * @param hotkeyId
 	 * @param callback
 	 * @private
@@ -45,7 +45,9 @@ export class HotkeysService {
 					result.games[gameId] &&
 					result.games[gameId].length
 				) {
-					const hotkey = result.games[gameId].find(hotkey => hotkey);
+					const hotkey = result.games[gameId].find(hotkey => {
+						return (hotkey.name === hotkeyId);
+					});
 
 					if (hotkey) {
 						callback(hotkey.binding);
