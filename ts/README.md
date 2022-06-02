@@ -1,3 +1,6 @@
+**IMPORTANT: In order to use install this app, you need to be Whitelisted as a developer!
+(https://overwolf.github.io/docs/start/sdk-introduction#get-whitelisted-as-a-developer)**
+
 # Sample - TS
 Example-ts is an example app, meant to be used as a reference for developers who are new to Overwolf.
 The app is meant to demonstrate some basic points and flows that are relevant when developing Overwolf apps:
