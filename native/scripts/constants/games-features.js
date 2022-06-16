@@ -233,6 +233,19 @@ export const kGamesFeatures = new Map([
       'match_info'
     ]
   ],
+  // rocket league
+  [
+    10798,
+    [
+      'stats',
+      'roster',
+      'match',
+      'me',
+      'match_info',
+      'death',
+      'game_info'
+    ]
+  ]
 ]);
 
 export const kGameClassIds = Array.from(kGamesFeatures.keys());
