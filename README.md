@@ -13,8 +13,9 @@ This repository contains two variants of the sample app:
 
 * native - pure js version without any external js framework.
 * ts - typeScript version of the app, that uses external packages,etc.
+* vue - Vue.js version of the app, that uses external packages and custom vue-components, etc.
 
-In the future we will add more variants like React, Vue, etc.
+In the future we will add more variants like React, etc.
 
 ## How to load the app
 
