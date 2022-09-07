@@ -103,7 +103,7 @@ export class BackgroundController {
 
     const gameFeatures = kGamesFeatures.get(gameInfo.classId);
 
-    if (gameFeatures && gameFeatures.length) {
+    if (gameFeatures && gameFeatures) {
       // Register to game events
       GepService.setRequiredFeatures(
         gameFeatures,
@@ -137,7 +137,7 @@ export class BackgroundController {
 
     const gameFeatures = kGamesFeatures.get(gameInfo.classId);
 
-    if (gameFeatures && gameFeatures.length) {
+    if (gameFeatures && gameFeatures) {
       GepService.setRequiredFeatures(
         gameFeatures,
         e => this._onGameEvents(e),

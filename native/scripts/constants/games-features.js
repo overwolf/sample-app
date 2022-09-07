@@ -1,4 +1,9 @@
 export const kGamesFeatures = new Map([
+  // goose goose duck
+  [
+    22092,
+    []
+  ],
   // Fortnite
   [
     21216,
