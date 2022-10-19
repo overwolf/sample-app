@@ -95,16 +95,6 @@ export const kGamesFeatures = new Map([
       'match_info'
     ]
   ],
-  // Overwatch
-  [
-    10844,
-    [
-      'game_info',
-      'match_info',
-      'kill',
-      'death'
-    ]
-  ],
   // PUBG
   [
     10906,
