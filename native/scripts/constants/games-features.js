@@ -8,7 +8,7 @@ export const kGamesFeatures = new Map([
   [
     22250,
     []
-  ]
+  ],
   // Fortnite
   [
     21216,
