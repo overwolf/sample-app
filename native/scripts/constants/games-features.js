@@ -6,7 +6,7 @@ export const kGamesFeatures = new Map([
   ],
   // squadblast
   [
-    22250,
+    222501,
     []
   ],
   // Fortnite
