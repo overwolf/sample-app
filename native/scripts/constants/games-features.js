@@ -132,19 +132,7 @@ export const kGamesFeatures = new Map([
   // Splitgate: Arena Warfare
   [
     21404,
-    [
-      'game_info',
-      'match_info',
-      'player',
-      'location',
-      'match',
-      'feed',
-      'connection',
-      'kill',
-      'death',
-      'portal',
-      'assist'
-    ]
+    []
   ],
   // Path of Exile
   [
