@@ -95,6 +95,15 @@ export const kGamesFeatures = new Map([
       'match_info'
     ]
   ],
+  // Lost Ark
+  [
+    21864,
+    [
+      'gep_internal',
+      'game_info',
+      'match_info'
+    ]
+  ]
   // PUBG
   [
     10906,
