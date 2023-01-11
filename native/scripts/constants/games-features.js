@@ -103,7 +103,7 @@ export const kGamesFeatures = new Map([
       'game_info',
       'match_info'
     ]
-  ]
+  ],
   // PUBG
   [
     10906,
