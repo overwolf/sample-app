@@ -10,7 +10,7 @@ export const kGamesFeatures = new Map([
     [
       'game_info'
     ]
-  ]
+  ],
   // Fortnite
   [
     21216,
