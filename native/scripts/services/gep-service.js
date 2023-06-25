@@ -5,6 +5,9 @@
  */
 const REGISTER_RETRY_TIMEOUT = 10000;
 
+let storedEventsListener = null;
+let storedInfoListener = null;
+
 export class GepService {
   static setRequiredFeatures(features, eventsListener, infoListener) {
     if (!features.length) this.setListeners(eventsListener, infoListener) // if there are no features, this is an sdk game. as such, just sign up directly
@@ -30,10 +33,18 @@ export class GepService {
   }
 
   static setListeners(eventsListener, infoListener) {
-    overwolf.games.events.onNewEvents.removeListener(eventsListener);
+    if (storedEventsListener) {
+      overwolf.games.events.onNewEvents.removeListener(storedEventsListener);
+      storedEventsListener = null;
+    }
     overwolf.games.events.onNewEvents.addListener(eventsListener);
+    storedEventsListener = eventsListener;
 
-    overwolf.games.events.onInfoUpdates2.removeListener(infoListener);
+    if (storedInfoListener) {
+      overwolf.games.events.onInfoUpdates2.removeListener(storedInfoListener);
+      storedInfoListener = null;
+    }
     overwolf.games.events.onInfoUpdates2.addListener(infoListener);
+    storedInfoListener = infoListener;
   }
 }
