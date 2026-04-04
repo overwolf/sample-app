@@ -1,0 +1,106 @@
+{
+  "manifest_version": 1,
+  "type": "WebApp",
+  "meta": {
+    "name": "Ward Optimizer",
+    "author": "Ward Optimizer",
+    "version": "1.0.0",
+    "minimum-overwolf-version": "0.160.0",
+    "description": "Suggests optimal ward placements for League of Legends",
+    "dock_button_title": "Ward Optimizer",
+    "icon": "icons/IconMouseOver.png",
+    "icon_gray": "icons/IconMouseNormal.png",
+    "launcher_icon": "icons/desktop-icon.ico",
+    "window_icon": "icons/IconMouseOver.png"
+  },
+  "permissions": [
+    "Hotkeys",
+    "GameInfo",
+    "FileSystem",
+    "Extensions",
+    "Streaming",
+    "Profile"
+  ],
+  "data": {
+    "start_window": "background",
+    "hotkeys": {
+      "ward_optimizer_showhide": {
+        "title": "Show/Hide Ward Optimizer",
+        "action-type": "toggle",
+        "default": "Ctrl+F"
+      }
+    },
+    "force_browser": "user",
+    "windows": {
+      "background": {
+        "file": "background.html",
+        "background_optimization": true,
+        "is_background_page": true
+      },
+      "desktop": {
+        "file": "desktop.html",
+        "desktop_only": true,
+        "native_window": true,
+        "resizable": false,
+        "transparent": true,
+        "override_on_update": true,
+        "size": {
+          "width": 480,
+          "height": 550
+        },
+        "min_size": {
+          "width": 480,
+          "height": 550
+        }
+      },
+      "second_screen": {
+        "file": "second_screen.html",
+        "desktop_only": true,
+        "native_window": true,
+        "resizable": false,
+        "transparent": false,
+        "override_on_update": true,
+        "disable_hardware_acceleration": true,
+        "size": {
+          "width": 360,
+          "height": 550
+        },
+        "min_size": {
+          "width": 360,
+          "height": 550
+        }
+      },
+      "in_game": {
+        "file": "in_game.html",
+        "in_game_only": true,
+        "focus_game_takeover": "ReleaseOnHidden",
+        "focus_game_takeover_release_hotkey": "ward_optimizer_showhide",
+        "transparent": true,
+        "topmost": true,
+        "resizable": false,
+        "override_on_update": true,
+        "grab_keyboard_focus": false,
+        "grab_focus_on_desktop": false
+      }
+    },
+    "game_targeting": {
+      "type": "dedicated",
+      "game_ids": [5426]
+    },
+    "game_events": [5426],
+    "launch_events": [
+      {
+        "event": "GameLaunch",
+        "event_data": {
+          "game_ids": [5426]
+        },
+        "start_minimized": true
+      }
+    ],
+    "developer": {
+      "enable_auto_refresh": true,
+      "reload_delay": 1000,
+      "filter": "*.*"
+    }
+  }
+}

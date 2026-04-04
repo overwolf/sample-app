@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../../css/general.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/second_screen.css" />
+  <title>Ward Optimizer - Second Screen</title>
+  <script src="https://content.overwolf.com/libs/ads/latest/owads.min.js" async onload="window.__adsReady=true" onerror="window.__adsReady=false"></script>
+</head>
+<body class="second-screen">
+  <header id="header" class="app-header lol-header">
+    <img src="../../img/ward-logo.svg" class="header-logo" />
+    <h1>Ward Optimizer</h1>
+    <div class="window-controls-group">
+      <button id="minimizeButton" class="window-control window-control-minimize"></button>
+      <button id="maximizeButton" class="window-control window-control-maximize"></button>
+      <button id="closeButton" class="window-control window-control-close"></button>
+    </div>
+  </header>
+
+  <div class="ss-hotkey-bar">
+    <kbd>Ctrl+F</kbd> Show wards &nbsp; <kbd>Ctrl+F x2</kbd> Interactive mode
+  </div>
+
+  <main class="ss-content">
+    <!-- Game Status -->
+    <div class="ss-card">
+      <div class="ss-status">
+        <span id="ssPhase" class="ss-phase">Early Game</span>
+        <span id="ssRole" class="ss-role">-</span>
+        <span id="ssSide" class="ss-side">-</span>
+      </div>
+      <div class="ss-timer" id="ssTimer">0:00</div>
+    </div>
+
+    <!-- Ward Suggestions -->
+    <div class="ss-card">
+      <h2>Ward Suggestions</h2>
+      <div id="ssWardList" class="ss-ward-list">
+        <p class="ss-muted">Press Ctrl+F in-game to see ward spots</p>
+      </div>
+    </div>
+
+    <!-- Game Stats -->
+    <div class="ss-card">
+      <h2>Game Stats</h2>
+      <div class="ss-stats">
+        <div class="ss-stat">
+          <span class="ss-stat-value" id="ssKills">0</span>
+          <span class="ss-stat-label">Team Kills</span>
+        </div>
+        <div class="ss-stat">
+          <span class="ss-stat-value" id="ssDeaths">0</span>
+          <span class="ss-stat-label">Enemy Kills</span>
+        </div>
+        <div class="ss-stat">
+          <span class="ss-stat-value ss-gold" id="ssGold">Even</span>
+          <span class="ss-stat-label">Gold</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives -->
+    <div class="ss-card">
+      <h2>Objectives</h2>
+      <div class="ss-objectives">
+        <div class="ss-obj" id="ssDragon">
+          <span class="ss-obj-icon">D</span>
+          <span class="ss-obj-status">-</span>
+        </div>
+        <div class="ss-obj" id="ssBaron">
+          <span class="ss-obj-icon">B</span>
+          <span class="ss-obj-status">-</span>
+        </div>
+        <div class="ss-obj" id="ssHerald">
+          <span class="ss-obj-icon">H</span>
+          <span class="ss-obj-status">-</span>
+        </div>
+        <div class="ss-obj" id="ssGrubs">
+          <span class="ss-obj-icon">G</span>
+          <span class="ss-obj-status">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ad: 400x60 banner -->
+    <div class="ss-ad-wrapper">
+      <div id="ad-second-screen" class="ss-ad-container"></div>
+    </div>
+  </main>
+</body>
+</html>

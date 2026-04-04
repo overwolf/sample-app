@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Ward base -->
+  <ellipse cx="32" cy="58" rx="12" ry="4" fill="#785A28"/>
+  <!-- Ward body -->
+  <path d="M26 56 L22 30 C22 20 42 20 42 30 L38 56 Z" fill="#0A1428" stroke="#C89B3C" stroke-width="2"/>
+  <!-- Ward eye -->
+  <ellipse cx="32" cy="32" rx="6" ry="8" fill="#0AC8B9" opacity="0.9"/>
+  <ellipse cx="32" cy="32" rx="3" ry="5" fill="#010A13"/>
+  <!-- Ward eye glow -->
+  <ellipse cx="32" cy="32" rx="8" ry="10" fill="none" stroke="#0AC8B9" stroke-width="1" opacity="0.4"/>
+  <!-- Ward top spike -->
+  <path d="M30 20 L32 10 L34 20" fill="#C89B3C"/>
+  <!-- Vision lines -->
+  <line x1="20" y1="28" x2="12" y2="22" stroke="#0AC8B9" stroke-width="1" opacity="0.3"/>
+  <line x1="44" y1="28" x2="52" y2="22" stroke="#0AC8B9" stroke-width="1" opacity="0.3"/>
+  <line x1="18" y1="34" x2="10" y2="34" stroke="#0AC8B9" stroke-width="1" opacity="0.3"/>
+  <line x1="46" y1="34" x2="54" y2="34" stroke="#0AC8B9" stroke-width="1" opacity="0.3"/>
+</svg>

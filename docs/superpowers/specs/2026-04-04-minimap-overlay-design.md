@@ -1,0 +1,1 @@
+This spec has been superseded. See the ward optimizer cleanup spec and the minimap overlay implementation for current state. The next feature is the Live Client Data API integration for dynamic ward suggestions.

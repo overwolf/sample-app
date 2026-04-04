@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../../css/general.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/desktop.css" />
+  <title>Ward Optimizer</title>
+  <script src="https://content.overwolf.com/libs/ads/latest/owads.min.js" async onload="window.__adsReady=true" onerror="window.__adsReady=false"></script>
+</head>
+<body class="desktop">
+  <!-- Header -->
+  <header id="header" class="app-header lol-header">
+    <img src="../../img/ward-logo.svg" class="header-logo" />
+    <h1>Ward Optimizer</h1>
+    <div class="window-controls-group">
+      <button id="minimizeButton" class="window-control window-control-minimize"></button>
+      <button id="maximizeButton" class="window-control window-control-maximize"></button>
+      <button id="closeButton" class="window-control window-control-close"></button>
+    </div>
+  </header>
+
+  <!-- Welcome Modal (first launch only) -->
+  <div id="welcomeModal" class="welcome-modal" style="display:none">
+    <div class="welcome-card">
+      <div class="hex-card-corner hex-card-corner-tl"></div>
+      <div class="hex-card-corner hex-card-corner-tr"></div>
+      <div class="hex-card-corner hex-card-corner-bl"></div>
+      <div class="hex-card-corner hex-card-corner-br"></div>
+
+      <img src="../../img/ward-logo.svg" class="welcome-logo" />
+      <h1 class="welcome-title">Welcome to Ward Optimizer</h1>
+      <p class="welcome-desc">Your intelligent ward placement assistant for League of Legends</p>
+
+      <div class="welcome-features">
+        <div class="welcome-feature">
+          <span class="feature-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#0AC8B9" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></span>
+          <div>
+            <strong>Smart Ward Suggestions</strong>
+            <p>Get ward spot recommendations based on game phase, objectives, and your role.</p>
+          </div>
+        </div>
+        <div class="welcome-feature">
+          <span class="feature-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#C89B3C" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h2M10 8h2M14 8h4M6 12h4M12 12h6M8 16h8"/></svg></span>
+          <div>
+            <strong>Press Ctrl+F In-Game</strong>
+            <p>Single tap to show wards for 5 seconds. Double tap for interactive mode with calibration.</p>
+          </div>
+        </div>
+        <div class="welcome-feature">
+          <span class="feature-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#C89B3C" stroke-width="2"><path d="M3 20h18M6 16V10M10 16V6M14 16V8M18 16V4"/></svg></span>
+          <div>
+            <strong>Post-Game Analysis</strong>
+            <p>After each match, get a warding performance summary with personalized tips.</p>
+          </div>
+        </div>
+      </div>
+
+      <button id="welcomeStartBtn" class="lol-btn welcome-btn">Get Started</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <img src="../../img/ward-logo.svg" class="hero-logo" />
+    <h1 class="hero-title">WARD OPTIMIZER</h1>
+    <p class="hero-tagline">Intelligent ward placement for League of Legends</p>
+    <div id="statusIndicator" class="status-pill status-disconnected">
+      <span class="status-dot"></span>
+      <span id="statusText">Not Connected</span>
+    </div>
+  </section>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn tab-active" data-tab="home">Home</button>
+    <button class="tab-btn" data-tab="lastgame">Last Game</button>
+    <button class="tab-btn" data-tab="history">History</button>
+  </nav>
+
+  <!-- Tab Content -->
+  <!-- HOME TAB -->
+  <main id="tab-home" class="content tab-content tab-visible">
+    <div class="home-row">
+      <div class="hex-card">
+        <div class="hex-card-corner hex-card-corner-tl"></div>
+        <div class="hex-card-corner hex-card-corner-tr"></div>
+        <div class="hex-card-corner hex-card-corner-bl"></div>
+        <div class="hex-card-corner hex-card-corner-br"></div>
+        <h2>Minimap Settings</h2>
+        <div class="settings-group">
+          <label class="setting-label">
+            Detection Mode:
+            <span id="modeDisplay" class="setting-value">Auto</span>
+          </label>
+          <button id="resetAutoBtn" class="lol-btn">Reset to Auto-Detect</button>
+        </div>
+        <div class="settings-group">
+          <label class="setting-label">
+            Minimap Side:
+            <select id="sideSelect" class="lol-select">
+              <option value="">Auto (from config)</option>
+              <option value="right">Right</option>
+              <option value="left">Left</option>
+            </select>
+          </label>
+        </div>
+        <p class="settings-hint">Calibrate in-game with Ctrl+F double tap.</p>
+      </div>
+      <div class="hex-card">
+        <div class="hex-card-corner hex-card-corner-tl"></div>
+        <div class="hex-card-corner hex-card-corner-tr"></div>
+        <div class="hex-card-corner hex-card-corner-bl"></div>
+        <div class="hex-card-corner hex-card-corner-br"></div>
+        <h2>Hotkeys</h2>
+        <div class="hotkey-row">
+          <kbd class="hotkey-key">Ctrl+F</kbd>
+          <span class="hotkey-desc">Show ward suggestions (5 seconds)</span>
+        </div>
+        <div class="hotkey-row">
+          <kbd class="hotkey-key">Ctrl+F x2</kbd>
+          <span class="hotkey-desc">Toggle interactive mode (calibrate, settings)</span>
+        </div>
+      </div>
+    </div>
+    <div class="hex-card home-full-width">
+      <div class="hex-card-corner hex-card-corner-tl"></div>
+      <div class="hex-card-corner hex-card-corner-tr"></div>
+      <div class="hex-card-corner hex-card-corner-bl"></div>
+      <div class="hex-card-corner hex-card-corner-br"></div>
+      <h2>Warding Tips</h2>
+      <div class="tip-container">
+        <div class="tip-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#C89B3C" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div>
+        <p id="tipText" class="tip-text">Ward river brushes before objectives spawn</p>
+      </div>
+    </div>
+    <!-- Ad: 728x90 banner on Home tab -->
+    <div class="ad-wrapper ad-400x60">
+      <div id="ad-home" class="ad-container"></div>
+    </div>
+  </main>
+
+  <!-- LAST GAME TAB -->
+  <main id="tab-lastgame" class="tab-content">
+    <div id="lastGameContent" class="summary-container">
+      <p class="no-data-message">No game data yet. Play a match to see your summary!</p>
+    </div>
+    <!-- Ad: 728x90 banner on Last Game tab -->
+    <div class="ad-wrapper ad-400x60">
+      <div id="ad-lastgame" class="ad-container"></div>
+    </div>
+  </main>
+
+  <!-- HISTORY TAB -->
+  <main id="tab-history" class="tab-content">
+    <div id="historyContent" class="summary-container">
+      <p class="no-data-message">No game history yet. Play some matches to see your trends!</p>
+    </div>
+    <!-- Ad: 728x90 banner on History tab -->
+    <div class="ad-wrapper ad-400x60">
+      <div id="ad-history" class="ad-container"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="lol-footer">
+    <span id="footerMessage">Launch League of Legends to activate the overlay</span>
+    <span class="version">v1.0.0</span>
+  </footer>
+</body>
+</html>

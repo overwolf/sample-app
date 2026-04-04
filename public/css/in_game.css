@@ -1,0 +1,289 @@
+/* Full-screen overlay body */
+body {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* Floating header — hidden by default, shown during interaction */
+.overlay-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background-color: rgba(39, 39, 39, 0.9);
+  border-radius: 0 0 8px 8px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.overlay-header h1 {
+  font-size: 12px;
+}
+
+/* Calibrate button in header */
+.header-btn {
+  background: #525252;
+  color: #d5d5d5;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.header-btn:hover {
+  background: #6a6a6a;
+  color: #fff;
+}
+
+/* Full-screen overlay container */
+#overlayContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+/* Ward markers */
+.ward-marker {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(0, 222, 250, 0.6);
+  border: 2px solid rgba(0, 222, 250, 0.9);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 0 6px rgba(0, 222, 250, 0.4);
+  transition: opacity 0.5s ease, transform 0.3s ease, left 0.5s ease, top 0.5s ease;
+  animation: ward-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ward-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 222, 250, 0.4); }
+  50% { box-shadow: 0 0 12px rgba(0, 222, 250, 0.7); }
+}
+
+.ward-marker:hover {
+  background-color: rgba(0, 222, 250, 0.8);
+}
+
+/* Ward appear/disappear animation */
+.ward-marker-enter {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+}
+
+.ward-marker-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.ward-marker-exit {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+}
+
+/* Mapping dots — numbered markers for ward mapping tool */
+.mapping-dot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(255, 215, 0, 0.8);
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  font-size: 10px;
+  font-weight: bold;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-shadow: none;
+}
+
+/* Defensive ward markers — pink */
+.ward-marker-defensive {
+  background-color: rgba(255, 105, 180, 0.6);
+  border-color: rgba(255, 105, 180, 0.9);
+  box-shadow: 0 0 6px rgba(255, 105, 180, 0.4);
+  animation: ward-pulse-pink 2s ease-in-out infinite;
+}
+
+@keyframes ward-pulse-pink {
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 105, 180, 0.4); }
+  50% { box-shadow: 0 0 12px rgba(255, 105, 180, 0.7); }
+}
+
+.ward-marker-defensive:hover {
+  background-color: rgba(255, 105, 180, 0.8);
+}
+
+/* Calibration overlay — pointer-events: auto overrides parent's none */
+.calibration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 5000;
+  pointer-events: auto;
+}
+
+/* Calibration box */
+.calibration-box {
+  position: absolute;
+  border: 3px solid rgba(0, 222, 250, 0.8);
+  background: rgba(0, 222, 250, 0.15);
+  cursor: move;
+  z-index: 5001;
+}
+
+/* Corner indicators (visual only — interaction handled by position detection) */
+.calibration-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 222, 250, 0.9);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.calibration-corner-top-left { top: -4px; left: -4px; }
+.calibration-corner-top-right { top: -4px; right: -4px; }
+.calibration-corner-bottom-left { bottom: -4px; left: -4px; }
+.calibration-corner-bottom-right { bottom: -4px; right: -4px; }
+
+.calibration-center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: red;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5003;
+}
+
+.calibration-instructions {
+  display: none;
+}
+
+.calibration-buttons {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.calibration-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.calibration-btn-confirm {
+  background: rgba(0, 222, 250, 0.9);
+  color: #000;
+}
+
+.calibration-btn-confirm:hover {
+  background: rgba(0, 222, 250, 1);
+}
+
+.calibration-btn-cancel {
+  background: #525252;
+  color: #d5d5d5;
+}
+
+.calibration-btn-cancel:hover {
+  background: #6a6a6a;
+  color: #fff;
+}
+
+/* First-game hint */
+.first-game-hint {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8000;
+  pointer-events: none;
+  animation: hintSlideIn 0.5s ease, hintFadeOut 0.5s ease 7s forwards;
+}
+
+@keyframes hintSlideIn {
+  from { opacity: 0; top: 30px; }
+  to { opacity: 1; top: 50px; }
+}
+
+@keyframes hintFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.hint-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(10, 20, 40, 0.92);
+  border: 1px solid rgba(200, 155, 60, 0.6);
+  border-radius: 8px;
+  padding: 14px 22px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(200, 155, 60, 0.1);
+}
+
+.hint-logo {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 0 8px rgba(10, 200, 185, 0.3));
+}
+
+.hint-text strong {
+  color: #C89B3C;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hint-text p {
+  color: #CDBE91;
+  font-size: 12px;
+  margin: 0;
+}
+
+.hint-text kbd {
+  background: rgba(200, 155, 60, 0.2);
+  border: 1px solid rgba(200, 155, 60, 0.4);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: #fff;
+  font-family: inherit;
+}
+
+.hint-sub {
+  color: #A09B8C !important;
+  font-size: 11px !important;
+  margin-top: 2px !important;
+}

@@ -1,37 +1,39 @@
-# Overwolf sample app
+# Ward Optimizer
 
-This repository contains sample apps that demonstrate some basic points and flows that are relevant when developing Overwolf apps:
+An Overwolf app that suggests optimal ward placements for League of Legends based on game phase and team side.
 
-- The apps will launch automatically when a supported starts
-- Register to the overwolf.games.events API in order to receive real time events from the game.
-- Define a custom hotkey to be used in-game
-- Communication between the app windows according to our best practices
+## Setup
 
-## Sample app versions
+```bash
+npm install
+```
 
-This repository contains two variants of the sample app:
+## Development
 
-* native - pure js version without any external js framework.
-* ts - typeScript version of the app, that uses external packages,etc.
+Watch mode (rebuilds on file changes):
 
-In the future we will add more variants like React, Vue, etc.
+```bash
+npm run dev
+```
 
-## How to load the app
+## Build
 
-### Download from the store
+Build and package as .opk:
 
-It's highly recommended to follow the build steps for setting up the sample app, including downloading the source code and building it manually.
-For those who need it, we can provide a pre-built and pre-packaged version. Contact us at developers@overwolf.com for more details.
+```bash
+npm run build
+```
 
-### Load as unpacked extension.
+The .opk file will be in `releases/`.
 
-You can load the native version of the sample app "as is", without any build process. Just download the repo and under Overwolf's settings, choose Support tab and then Development options. Click the Load unpacked button and choose the relevant folder of the native folder from the repository you just downloaded.
+## Architecture
 
-* In order to load an app as "unpacked", you'll first have to be whitelisted as an Overwolf dev. More details on how to be whitelisted can be found [here](https://overwolf.github.io/docs/start/sdk-introduction#whitelist-as-a-developer)
-* To load the typescript version, first you should build it. More details on the readme page under the "ts" folder in this repo.
+- **background** — Invisible window that orchestrates app lifecycle (detects League launch, manages windows)
+- **desktop** — Shown when League is not running
+- **in_game** — Shown during a League match, hosts the ward suggestion overlay
 
-## Notes
+## Features (src/features/)
 
-Editing the author or app name in the manifest will prevent loading the app as unpacked app.
-
-For any further information or questions, contact developers@overwolf.com
+- **ward-data.ts** — Ward spot definitions and filtering by phase/side
+- **game-state.ts** — Reads match context from Overwolf GEP events
+- **minimap-overlay.ts** — Renders ward suggestion markers

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../../css/general.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/in_game.css" />
+  <title>Ward Optimizer</title>
+</head>
+<body class="in-game">
+  <header id="header" class="app-header overlay-header">
+    <h1>Ward Optimizer</h1>
+    <button id="calibrateButton" class="header-btn">Calibrate</button>
+    <button id="resetCalibrationButton" class="header-btn">Reset</button>
+    <button id="mapWardsButton" class="header-btn" style="display:none">Map Wards</button>
+    <button id="exportWardsButton" class="header-btn" style="display:none">Export</button>
+    <button id="clearWardsButton" class="header-btn" style="display:none">Clear</button>
+    <button id="stopMappingButton" class="header-btn" style="display:none">Stop</button>
+    <h1 class="hotkey-text">
+      Show/Hide:
+      <kbd id="hotkey"></kbd>
+    </h1>
+    <div class="window-controls-group">
+      <button id="minimizeButton" class="window-control window-control-minimize"></button>
+      <button id="maximizeButton" class="window-control window-control-maximize"></button>
+      <button id="closeButton" class="window-control window-control-close"></button>
+    </div>
+  </header>
+
+  <div id="overlayContainer"></div>
+
+  <!-- First-game hint (shown once, auto-hides) -->
+  <div id="firstGameHint" class="first-game-hint" style="display:none">
+    <div class="hint-card">
+      <img src="../../img/ward-logo.svg" class="hint-logo" />
+      <div class="hint-text">
+        <strong>Ward Optimizer Active</strong>
+        <p>Press <kbd>Ctrl+F</kbd> to see ward suggestions</p>
+        <p class="hint-sub">Double tap for interactive mode</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
