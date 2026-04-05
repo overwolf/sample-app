@@ -96,7 +96,7 @@ class SecondScreen extends AppWindow {
           return `<div class="ss-ward-item ${typeClass}">
             <span class="ss-ward-dot"></span>
             <span class="ss-ward-label">${spot.label}</span>
-            <span class="ss-ward-score">${spot.score}</span>
+            <span class="ss-ward-score">${spot.score.toFixed(2)}</span>
           </div>`;
         }).join('');
       }

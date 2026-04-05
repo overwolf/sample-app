@@ -150,7 +150,7 @@ export class RiotAPI {
       deaths: participant.deaths || 0,
       assists: participant.assists || 0,
       wardScore,
-      teamAvgWardScore: Math.round(teamAvgWardScore * 10) / 10,
+      teamAvgWardScore: Math.round(teamAvgWardScore * 100) / 100,
       wardScoreTimeline: [],
       dragonsKilled: teamObjectives.dragon?.kills || 0,
       enemyDragonsKilled: enemyObjectives.dragon?.kills || 0,

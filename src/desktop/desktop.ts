@@ -150,7 +150,7 @@ class Desktop extends AppWindow {
     const kda = `${kills}/${deaths}/${assists}`;
     const winClass = game.win ? 'win' : 'loss';
     const winText = game.win ? 'Victory' : 'Defeat';
-    const wardScore = game.wardScore || 0;
+    const wardScore = (game.wardScore || 0).toFixed(2);
     const teamAvg = game.teamAvgWardScore || 0;
 
     container.innerHTML = `
@@ -177,7 +177,7 @@ class Desktop extends AppWindow {
             <div class="stat-label">Ward Score</div>
           </div>
           <div class="stat-box">
-            <div class="stat-value">${teamAvg.toFixed(0)}</div>
+            <div class="stat-value">${teamAvg.toFixed(2)}</div>
             <div class="stat-label">Team Avg</div>
           </div>
         </div>
@@ -223,7 +223,7 @@ class Desktop extends AppWindow {
     const bars = game.wardScoreTimeline.map(point => {
       const height = Math.round((point.score / maxScore) * 60);
       const minute = Math.floor(point.time / 60);
-      return `<div class="timeline-bar" style="height:${height}px" title="${minute}min: ${point.score}"></div>`;
+      return `<div class="timeline-bar" style="height:${height}px" title="${minute}min: ${point.score.toFixed(2)}"></div>`;
     }).join('');
 
     return bars;
@@ -261,7 +261,7 @@ class Desktop extends AppWindow {
         <div class="history-row">
           <span class="history-champ">${g.champion || '?'}</span>
           <span class="history-role">${g.role || '?'}</span>
-          <span class="history-ward-score">${g.wardScore || 0}</span>
+          <span class="history-ward-score">${(g.wardScore || 0).toFixed(2)}</span>
           <span class="history-result ${winClass}">${g.win ? 'W' : 'L'}</span>
           <span class="history-date">${date}</span>
         </div>

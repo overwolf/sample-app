@@ -172,7 +172,7 @@ export class GameSummaryCollector {
       tips.push({ text: 'Your team lost dragon control. Ward dragon pit 60s before it spawns.', type: 'improvement' });
     }
     if (summary.role === 'support' && (summary.wardScore || 0) < minutesPlayed * 1.5) {
-      const actual = ((summary.wardScore || 0) / minutesPlayed).toFixed(1);
+      const actual = ((summary.wardScore || 0) / minutesPlayed).toFixed(2);
       tips.push({ text: `As support, aim for 1.5 ward score per minute. You had ${actual}.`, type: 'improvement' });
     }
     if (summary.duration > 25 * 60 && summary.lateGameWardScore <= 0) {
